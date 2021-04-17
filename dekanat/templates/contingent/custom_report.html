@@ -5,7 +5,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">Настраиваемый отчет</h4>
+                <h4 class="modal-title">Настраиваемый отчёт</h4>
             </div>
             <div class="modal-body">
                 <ul class="nav nav-tabs" role="tablist">
@@ -36,7 +36,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <button class="bootbox-btn" type="button" onclick="add_field_click()">Добавить поле
+                                <button class="bootbox-btn confirm_btn" type="button" onclick="add_field_click()">Добавить поле
                                 </button>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                             <label>Подпись снизу</label>
                             <input id="report_footer_input" class="form-control">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group hide">
                             <div class="checkbox-dek">
                                 <label>
                                     <input id="report_kurator_checkbox" type="checkbox" class="form-group"/>
@@ -93,7 +93,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group hide">
                             <div class="checkbox-dek">
                                 <label>
                                     <input id="report_starosta_checkbox" type="checkbox"
@@ -122,7 +122,7 @@
                                     <label>
                                         <input id="report_print_sign_checkbox" type="checkbox" class="form-group"
                                                checked/>
-                                        Подпись директора института
+                                        Подпись директора
                                         <span class="cr">
                                         <i class="cr-icon glyphicon glyphicon-ok"></i>
                                     </span>
@@ -178,10 +178,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="bootbox-btn" data-dismiss="modal">Закрыть</button>
-                <button type="button" class="bootbox-btn confirm_btn"
-                        onclick="create_report()">Создать отчет
+                <button type="button" class="bootbox-btn confirm_btn" onclick="create_report()">Создать отчёт
                 </button>
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Закрыть</button>
             </div>
         </div>
     </div>
