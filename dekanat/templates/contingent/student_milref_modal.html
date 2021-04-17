@@ -1,0 +1,58 @@
+<div id="milref_editor_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Печать справки для военкомата</h4>
+            </div>
+            <div class="modal-body">
+                <form id="mil_ref_form">
+                    <div class="form-group>">
+                        <div class="checkbox-dek">
+                            <label>
+                                <input type="checkbox" id="is_change_spec_checkbox">
+                                <span class="cr">
+                            <i class="cr-icon glyphicon glyphicon-ok"></i>
+                        </span>
+                                Изменить направление
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="mil_ref_spec">Направление подготовки</label>
+                            <input class="form-control" id="mil_ref_spec" name="mil_ref_spec" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group>">
+                        <div class="checkbox-dek">
+                            <label>
+                                <input type="checkbox" id="is_change_kurs_checkbox">
+                                <span class="cr">
+                            <i class="cr-icon glyphicon glyphicon-ok"></i>
+                        </span>
+                                Изменить курс
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="mil_ref_kurs">Курс</label>
+                            <input type="number" min="1" class="form-control"
+                                   id="mil_ref_kurs" name="mil_ref_kurs" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group>">
+                        <div class="form-group">
+                            <label for="mil_ref_date">Дата выдачи</label>
+                            <input type="text" class="form-control datepicker-here"
+                                   id="mil_ref_date" name="mil_ref_date" value="{% now "d.m.Y" %}">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Отмена</button>
+                <button id="print_mil_ref_btn" type="button" class="bootbox-btn confirm_btn">Печать
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

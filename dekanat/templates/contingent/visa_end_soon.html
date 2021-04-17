@@ -1,0 +1,12 @@
+<div class="alert alert-danger alert-dismissible"
+     role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    {% for student in visa_ends_soon %}
+        <p>
+            <strong>Внимание!</strong>
+            У студента {{ student.surname }} {{ student.name }} {{ student.patronymic }} срок действия визы
+            заканчивается {{ student.docs__visa_end_date|date:'d.m.Y' }}
+        </p>
+    {% endfor %}
+</div>

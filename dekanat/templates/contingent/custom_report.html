@@ -1,0 +1,188 @@
+{{ fields|json_script:"all_fields" }}
+<div id="custom_report_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Настраиваемый отчет</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#report_fields" aria-controls="report_fields" role="tab" data-toggle="tab">
+                            Выбор полей
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report_settings" aria-controls="report_settings" role="tab" data-toggle="tab">
+                            Настройки
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#report_brims" aria-controls="report_brims" role="tab" data-toggle="tab">
+                            Ориентация и поля
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="report_fields" role="tabpanel" class="tab-pane active">
+                        <div class="row form-group" style="margin-top: 15px">
+                            <div class="col-md-8">
+                                <select id="add_field_select" class="form-control">
+                                    {% for field in fields %}
+                                        <option value="{{ field.name }}">{{ field.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="bootbox-btn" type="button" onclick="add_field_click()">Добавить поле
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <table id="fields_table" class="table table-striped table-hover table-bordered">
+                                <tr>
+                                    <th>Название поля</th>
+                                    <th>Подпись</th>
+                                    <th>Ширина</th>
+                                    <th></th>
+                                </tr>
+                                {% with field=fields.0 %}
+                                    <tr>
+                                        <td style="display:none;"><input value="{{ field.name }}" name="field_name">
+                                        </td>
+                                        <td>{{ field.label }}</td>
+                                        <td>
+                                            <input class="form-control input-sm" name="field_header"
+                                                    {% if field.header %} value="{{ field.header }}"
+                                                    {% else %} value="{{ field.label }}"{% endif %}>
+                                        </td>
+                                        <td>
+                                            <input class=" form-control input-sm" value="100"
+                                                   type="number"
+                                                   name="field_width">
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-default delete-btn"
+                                                    onclick="delete_field_click(this)">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endwith %}
+                            </table>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="report_settings">
+                        <div class="form-group">
+                            <label>Заголовок</label>
+                            <input id="report_title_input" class="form-control" value="Настраиваемый отчет">
+                        </div>
+                        <div class="form-group">
+                            <label>Подпись снизу</label>
+                            <input id="report_footer_input" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-dek">
+                                <label>
+                                    <input id="report_kurator_checkbox" type="checkbox" class="form-group"/>
+                                    Куратор
+                                    <span class="cr">
+                                        <i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-dek">
+                                <label>
+                                    <input id="report_starosta_checkbox" type="checkbox"
+                                           class="form-group"/>
+                                    Староста
+                                    <span class="cr">
+                                        <i class="cr-icon glyphicon glyphicon-ok"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox-dek">
+                                <label>
+                                    <input id="report_print_date_checkbox" type="checkbox" class="form-group"/>
+                                    Дата печати
+                                    <span class="cr">
+                                        <i class="cr-icon glyphicon glyphicon-ok"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        {% if request.curr_dep.edudepartment %}
+                            <div class="form-group">
+                                <div class="checkbox-dek">
+                                    <label>
+                                        <input id="report_print_sign_checkbox" type="checkbox" class="form-group"
+                                               checked/>
+                                        Подпись директора института
+                                        <span class="cr">
+                                        <i class="cr-icon glyphicon glyphicon-ok"></i>
+                                    </span>
+                                    </label>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <div class="checkbox-dek">
+                                <label>
+                                    <input id="report_print_number_checkbox" type="checkbox" class="form-group"
+                                           checked/>
+                                    Столбец с номером по порядку
+                                    <span class="cr">
+                                        <i class="cr-icon glyphicon glyphicon-ok"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="report_brims">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Ориентация</label>
+                                <select class="form-control" name="orientation" id="orientation">
+                                    <option value="portrait">Книжная</option>
+                                    <option value="landscape">Альбомная</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Верхнее</label>
+                                <input class="form-control" type="number" step="0.1" value="1" id="brim_top_input">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Нижнее</label>
+                                <input class="form-control" type="number" step="0.1" value="1" id="brim_bottom_input">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Левое</label>
+                                <input class="form-control" type="number" step="0.1" value="2" id="brim_left_input">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Правое</label>
+                                <input class="form-control" type="number" step="0.1" value="1" id="brim_right_input">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="bootbox-btn confirm_btn"
+                        onclick="create_report()">Создать отчет
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

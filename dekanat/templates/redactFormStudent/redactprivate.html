@@ -1,0 +1,466 @@
+{% extends "baseDekanat.html" %}
+{% load staticfiles %}
+
+{% block style %}
+    <link type="text/css" href="{% static 'css/jquery.kladr.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'card_student/style.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'js/jquery.kladr.min.js' %}"></script>
+    <script src="{% static 'js_utils/address_form.js' %}"></script>
+    <script src="{% static 'dekanat/js/student_relatives.js' %}"></script>
+    <script>
+        $('[name="is_invalid"]').on('change', function () {
+            $('[name="invalid_group"]').prop('disabled', !$(this).is(':checked'));
+        });
+
+        $(function () {
+            $(".phone_student").mask("+79999999999");
+        });
+
+    </script>
+{% endblock %}
+
+
+{% block menu %}
+    <div id="horizontalMenuDek">
+        <div id="main_hor_menu_div">
+            <div class="horizontal_menu_point">
+                <button class="menu_button" onClick="location.href='/dekanat/student/{{ student.id }}'">
+                    <span class="glyphicon glyphicon-arrow-left"></span> Назад
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block right %}
+    <div id="right-container-student" style="margin-top: 45px">
+        <form id="savePrivate" method="POST" action=""> {% csrf_token %} </form>
+        <div class="sub-container-student" id="yak1">
+            <div class="div_for_content_with_border">
+                <div class="div-title-student">
+                    <label>{{ student.surname }} {{ student.name }} {{ student.patronymic }}</label>
+                    <button id='savePrivateBtn' type="submit" class="btn btn-default pull-right" form="savePrivate">
+                        Сохранить
+                    </button>
+                </div>
+                <hr/>
+                <form id="savePrivate" class="form-horizontal student-info-form">
+                    <fieldset class="div-info-student">
+                        <legend> Личная информация</legend>
+                        <div class="form-group">
+                            <label for="birthday" class="col-sm-3 control-label">Дата рождения:</label>
+                            <div class="col-sm-9">
+                                <input id="birthday" type="text" name="birthday"
+                                       value="{{ student.info.birthday|date:"d.m.Y"|default:"" }}"
+                                       form="savePrivate" class="form-control datepicker-here input_date"
+                                       autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthday" class="col-sm-3 control-label">Пол:</label>
+                            <div class="col-sm-9">
+                                <select name="gender" value="{{ student.info.gender }}"
+                                        form="savePrivate" class="form-control">
+                                    <option value="1" {% if student.info.gender == 1 %} selected {% endif %}>
+                                        Мужской
+                                    </option>
+                                    <option value="0" {% if student.info.gender == 0 %} selected {% endif %}>
+                                        Женский
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="citizen" class="col-sm-3 control-label">Гражданство:</label>
+                            <div class="col-sm-9">
+                                <select name="citizen" form="savePrivate" class="form-control">
+                                    {% for d in ds %}
+                                        <option value="{{ d.id }}" {% if d == student.info.citizen %}
+                                                selected {% endif %}> {{ d }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="foreign_lang" class="col-sm-3 control-label">Язык:</label>
+                            <div class="col-sm-9">
+                                <select name="foreign_lang" form="savePrivate" class="form-control">
+                                    {% for d in dl %}
+                                        <option value="{{ d.lang }}" {% if d == student.info.foreign_lang %}
+                                                selected {% endif %}> {{ d }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Контактные данные:</label>
+                            <div class="col-sm-9">
+                                <input style="cursor: auto" disabled type="text" class="form-control input_phone"
+                                       value="{{ student.info.phone_1c|default:"" }}">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-3 control-label">Номер телефона:</label>
+                            <div class="col-sm-9">
+                                <input id="phone" type="tel" name="phone"
+                                       value="{{ student.info.phone|default:"" }}"
+                                       class="form-control phone_student input_phone" form="savePrivate">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="col-sm-3 control-label">Электронный адрес:</label>
+                            <div class="col-sm-9">
+                                <input type="email" name="email" value="{{ student.info.email|default:"" }}"
+                                       class="form-control input_email" form="savePrivate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="fact_address" class="col-sm-3 control-label">Фактический адрес
+                                проживания:</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <input readonly id="fact_address" type="text"
+                                           class="form-control" value="{{ student.info.fact_address|default:"" }}">
+                                    <input hidden name="fact_address" form="savePrivate">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" data-name="fact_address"
+                                                data-toggle="modal" data-target="#address_modal">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg_address" class="col-sm-3 control-label">Адрес регистрации:</label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <input readonly id="reg_address" type="text" class="form-control"
+                                           form="savePrivate" value="{{ student.info.reg_address|default:"" }}">
+                                    <input hidden name="reg_address" form="savePrivate">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" data-name="reg_address"
+                                                data-toggle="modal" data-target="#address_modal">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" id="copy_address">
+                                            <span class="glyphicon glyphicon-retweet"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="family_status" class="col-sm-3 control-label">Семейное положение:</label>
+                            <div class="col-sm-9">
+                                <select name="family_status" class="form-control" form="savePrivate">
+                                    <option value="0" {% if student.info.family_status == 0 %} selected {% endif %}>
+                                        Неженат/Незамужем
+                                    </option>
+                                    <option value="1" {% if student.info.family_status == 1 %} selected {% endif %}>
+                                        Женат/Замужем
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="in_hostel" class="col-sm-3 control-label"></label>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                    <div class="checkbox-dek">
+                                        <label>
+                                            <input type="checkbox" name="in_hostel" class="form-check-input"
+                                                    {% if student.hostel.in_hostel %} checked {% endif %}
+                                                   form="savePrivate">
+                                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>Проживает
+                                            в общежитии
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_large_family" class="col-sm-3 control-label"></label>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                    <div class="checkbox-dek">
+                                        <label>
+                                            <input type="checkbox" name="is_large_family" class="form-check-input"
+                                                    {% if student.info.is_large_family %} checked {% endif %}
+                                                   form="savePrivate">
+                                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                            Многодетная семья
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_orphan" class="col-sm-3 control-label"></label>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                    <div class="checkbox-dek">
+                                        <label>
+                                            <input type="checkbox" name="is_orphan" class="form-check-input"
+                                                    {% if student.info.is_orphan %} checked {% endif %}
+                                                   form="savePrivate">
+                                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>Сирота
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_orphan" class="col-sm-3 control-label"></label>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                    <div class="checkbox-dek">
+                                        <label>
+                                            <input type="checkbox" name="is_chernobyl" class="form-check-input"
+                                                    {% if student.info.is_chernobyl %} checked {% endif %}
+                                                   form="savePrivate">
+                                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>Чернобылец
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-3">
+                                <div class="checkbox-dek">
+                                    <label>
+                                        <input type="checkbox" name="is_invalid"
+                                                {% if student.info.is_invalid %} checked {% endif %} form="savePrivate">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>Инвалид
+                                    </label>
+                                </div>
+                            </div>
+                            <label for="invalid_group" class="col-sm-3 control-label">Группа инвалидности:</label>
+                            <div class="col-sm-3">
+                                <input type="text" pattern="\d+" maxlength="3" class="form-control" name="invalid_group"
+                                       value="{{ student.info.invalid_group|default:"" }}" form="savePrivate"
+                                        {% if not student.info.is_invalid %} disabled {% endif %}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_contract" class="col-sm-3 control-label">Количество детей:</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="children_count" form="savePrivate">
+                                    <option value="0">Нет детей</option>
+                                    <option {% if student.info.children_count == 1 %} selected {% endif %}>1</option>
+                                    <option {% if student.info.children_count == 2 %} selected {% endif %}>2</option>
+                                    <option {% if student.info.children_count == 3 %} selected {% endif %}>3</option>
+                                    <option {% if student.info.children_count == 4 %} selected {% endif %}>4</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_single_mother" class="col-sm-3 control-label"></label>
+                            <div class="col-sm-9">
+                                <div class="form-check">
+                                    <div class="checkbox-dek">
+                                        <label>
+                                            <input type="checkbox" name="is_single_mother" class="form-check-input"
+                                                    {% if student.info.single_mother %} checked {% endif %}
+                                                   form="savePrivate">
+                                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>Мать-одиночка
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_contract" class="col-sm-3 control-label">Номер договора на
+                                оплату:</label>
+                            <div class="col-sm-9">
+                                <input type="text" name="payment_contract"
+                                       value="{{ student.info.payment_contract_number|default:"" }}"
+                                       class="form-control" form="savePrivate">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="div-info-student">
+                        <legend> Информация о родственниках
+
+                        </legend>
+                        <div class="form-group">
+                            <table class="table table-hover tableleftstyle" id="info_relative_table">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Родственник</th>
+                                    <th>ФИО</th>
+                                    <th>Дата рождения</th>
+                                    <th>Телефон</th>
+                                    <th>E-mail</th>
+                                    <th>
+                                        <button id='btn_add_relstive' type="button"
+                                                class="btn btn-sm btn-default edit-btn pull-right">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for relative in relatives %}
+                                    <tr class="edit-relative-class">
+                                        <td>{{ relative.id }}</td>
+                                        <td>{{ relative.type }}</td>
+                                        <td>{{ relative.surname }} {{ relative.name.0 }}{{ relative.patronymic.0 }}</td>
+                                        <td>{{ relative.birthday|date:"d.m.Y"|default:"" }}</td>
+                                        <td>{{ relative.phone }}</td>
+                                        <td>{{ relative.email }}</td>
+                                        <th>
+                                            <button class="btn btn-sm btn-default btn-edit-tr-relative pull-right"
+                                                    type="button"
+                                                    relatid="{{ relative.id }}">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% include 'redactFormStudent/address_modal.html' %}
+
+    <div class="dekanat-modal modal  fade" id="edit_relative_student_modal" tabindex="-1" role="dialog"
+         aria-labelledby="modal_label">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modal_edit_group_label"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form-edit-relative" method="post" class="form-horizontal">{% csrf_token %}
+                        <input type="hidden" name="relative_id" id="relative_id">
+                        <div class="row order-label-with-input">
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Степень родства<font
+                                        color="red">* </font>:</label>
+                                <div class="col-sm-8">
+                                    <select class="selectpicker form-control" data-width="100%"
+                                            id="relative_type_select"
+                                            title="Выберите" name="relative_type_select">
+                                        {% for r in relatives_type_all %}
+                                            <option value="{{ r.relativeDegree_type }}" {% if r == relative.type %}
+                                                    selected {% endif %}> {{ r }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Фамилия<font color="red">* </font>:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="surname_relative"
+                                           id="surname_relative">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Имя<font color="red">* </font>:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="name_relative" id="name_relative">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Отчество:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="patronymic_relative"
+                                           id="patronymic_relative">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label for="birthday_relative" class="col-sm-4 control-label">Дата рождения:</label>
+                                <div class="col-sm-8">
+                                    <input id="birthday_relative" type="text" name="birthday_relative"
+                                           class="form-control datepicker-here input_date" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Адрес:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="address_relative"
+                                           id="address_relative">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Место работы:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="work_place" id="work_place">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Должность:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="post" id="post">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label class="col-sm-4 control-label">Номер телефона<font color="red">* </font>:</label>
+                                <div class="col-sm-8">
+                                    <input id="phone_relative" type="tel" name="phone_relative"
+                                           class="form-control input_phone ">
+                                </div>
+                            </div>
+                            <div class="form-group row col-md-12 order-label-with-input">
+                                <label for="email_relative" class="col-sm-4 control-label">Электронный адрес:</label>
+                                <div class="col-sm-8">
+                                    <input type="email" name="email_relative" id="email_relative"
+                                           class="form-control input_email">
+                                </div>
+                            </div>
+                            <div class="form-group row col-sm-12 order-label-with-input">
+                                <div class="col-sm-9 col-sm-offset-5">
+                                    <div class="form-check">
+                                        <div class="checkbox-dek">
+                                            <label>
+                                                <input type="checkbox" name="is_sms" id="is_sms"
+                                                       class="form-check-input"
+                                                       form="form-edit-relative" checked>
+                                                <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                                Согласие на смс-рассылку
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row col-sm-12 order-label-with-input">
+                                <div class="col-sm-9 col-sm-offset-1">
+                                    <font color="red"> * - обязательные поля </font>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bootbox-btn" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="bootbox-btn confirm_btn"
+                            onclick="save_relativ_btn_click('{{ student.id }}')">Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

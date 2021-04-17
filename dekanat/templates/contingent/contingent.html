@@ -1,0 +1,339 @@
+{% extends "baseDekanat.html" %}
+{% load staticfiles %}
+
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/switch.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'dekanat/css/style.css' %}"/>
+
+    <style>
+        datalist {
+            z-index: 1000;
+        }
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        function getTree() {
+            var tree = {% autoescape off %}
+                    {{ tree }}
+                {% endautoescape %}
+            ;
+            return tree;
+        }
+
+        function getDate() {
+            return {% if date %} '{{ date|date:'c' }}' {% endif %}
+        }
+
+        function getFields() {
+            return {% autoescape off %}{{ fields }}
+                {% endautoescape %};
+        }
+
+        function getStudents() {
+            return {% autoescape off %}{{ students_table.students }}
+                {% endautoescape %};
+        }
+    </script>
+    <script src="{% static 'js_utils/selecting_table.js' %}"></script>
+    <script src="{% static 'dekanat/js/contingent.js' %}"></script>
+    <script src="{% static 'dekanat/js/custom_report.js' %}"></script>
+{% endblock %}
+
+
+{% block menu %}
+    <div id="horizontalMenuDek">
+        <div class="f_and_last_menu_div" id="f_menu_div">
+            <div class="horizontal_menu_big_point">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Статус:</label>
+                    <div class="col-sm-8">
+                        <select id="status_select" class="form-control">
+                            <option selected value="1">Обучающиеся</option>
+                            <option value="2">Выпускники</option>
+                            <option value="3">Отчисленные</option>
+                            <option value="4">В академическом отпуске</option>
+                            <option value="5">Обучающиеся с продленной защитой</option>
+                            <option value="100">Все</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main_hor_menu_div">
+            <div class="horizontal_menu_point"></div>
+            <div id="print_dropdown_menu" class="horizontal_menu_point btn-group">
+                <button type="button" class="dropdown-toggle menu_button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-print"></span>
+                    Печать <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    {% if 'print_reference' in emp_permissions %}
+                        <li><a data-toggle="modal" data-target="#ref_editor_modal" href="#"> Печать справок</a></li>
+                        <li><a href="/dekanat/log_register_reference/" target="_blank">Журнал выданных справок об
+                            обучении</a></li>
+                    {% endif %}
+                    <li><a id="print_bypass_btn" href="#">Печать обходных листов</a></li>
+                    {% if 'edit_military_student_info' in emp_permissions %}
+                        <li>
+                            <a data-target="#milref_editor_modal" data-toggle="modal" href="#">
+                                Печать справок для военкомата
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li><a id="print_custom_report" href="#">Настраиваемый отчет</a></li>
+                    <li><a id="print_group_list" href="#">Список группы</a></li>
+                    {% if 'student_doc_dep' in emp_permissions %}
+                        <li><a id="act_of_expelled_students" href="/dekanat/act_of_expelled_students/"
+                               target="_blank">Акт передачи личных дел в архив</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'act_move_pers_doc_to_stud_dep' %}">Акт передачи личных дел в СтудОК</a></li>
+                </ul>
+            </div>
+            {% if 'get_irbis' in emp_permissions %}
+                <div class="horizontal_menu_point">
+                    <button id="print_file_irbis" class="menu_button">
+                        Экспорт для "ИРБИС"
+                    </button>
+                </div>
+            {% endif %}
+
+            <div class="horizontal_menu_point btn-group">
+                <button type="button" class="dropdown-toggle menu_button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-save"></span>
+                    Экспорт <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a data-toggle="modal" data-target="#contingent_excel_report_modal">Экспорт в excel</a></li>
+                    <li>
+                        <a id="movement_report_btn" href="#">
+                            Отчет о движении контингента
+                        </a>
+                    </li>
+                    <li>
+                        <a id="dismissed_report_btn" href="#">
+                            Отчет об отчисленных и переведенных на заочную форму обучения
+                        </a>
+                    </li>
+                    <li><a href="/dekanat/contingent/vpo_2_1_2/1/">ВПО 2.1.2 очная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_1_2/2/">ВПО 2.1.2 заочная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_1_5/1/">ВПО 2.1.5 очная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_1_5/2/">ВПО 2.1.5 заочная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_12/1/">ВПО 2.12 очная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_12/2/">ВПО 2.12 заочная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_13/1/">ВПО 2.13 очная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_2_13/2/">ВПО 2.13 заочная форма</a></li>
+                    <li><a href="/dekanat/contingent/vpo_foreign_by_spec/">ВПО иностранцы по специальностям</a></li>
+
+                    {% if 'edit_military_student_info' in emp_permissions %}
+                        <li>
+                            <a id="export_word" href="#">
+                                Выгрузить справки в word
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li><a href="{% url 'export_student_in_academ' %}">Находящиеся в академ. отпуске</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="horizontal_menu_point">
+            <button id="return_btn" class="menu_button" onclick='window.location.href="group_info/"'>
+                Учебные группы
+            </button>
+        </div>
+
+        <div class="horizontal_menu_point">
+            <button class="menu_button" onclick='window.location.href="/dekanat/contingent/payment_debt/"'>
+                Задолженность по оплате
+            </button>
+        </div>
+
+
+        <div class="f_and_last_menu_div" id="l_menu_div">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle menu_button" data-toggle="dropdown"
+                        id="drop-down-horMenu">Системы <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" id="dropdown-menu-ul">
+                    <li><a href="/dekanat/contingent/">Контингент</a></li>
+                    <li><a href="/orders">Приказы</a></li>
+                    <li><a href="/dekanat/stipend/">Стипендия</a></li>
+                    <li><a href="/dekanat/attestations/">Аттестации</a></li>
+                    <li><a href="/dekanat/sessions/">Сессии</a></li>
+                    <li><a href="/dekanat/markbook/">Зачетная книжка</a></li>
+                    <li><a {% if 'edit_plans' in emp_permissions %} href="/eduplans/"{% else %}href="/public/plans/"
+                                                                    target="_blank"{% endif %}>Учебные планы </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block left %}
+    <div id="rightMenuDek">
+        <form id="searchForm">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="show-history-dekanat">
+                        <div class="input-group col-md-12">
+                            <input type='text' class="form-control" id="historyDate"
+                                   placeholder="Показать на дату">
+                            <span class="input-group-btn">
+                                <button type="button" id="history_btn" class="btn btn-info"><i
+                                        class="glyphicon glyphicon-calendar"></i> Показать на дату</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="view_type_switch" class="switch-toggle switch-3 switch-candy">
+            <input id="na" name="state-d" type="radio" value="0" checked>
+            <label for="na" onclick="">По умолчанию</label>
+
+            <input id="on" name="state-d" type="radio" value="2"  {% if view_type == '2' %} checked {% endif %}>
+            <label for="on" onclick="">По подразделениям</label>
+
+            <input id="off" name="state-d" type="radio" value="1"  {% if view_type == '1' %}
+                   checked {% endif %}>
+            <label for="off" onclick="">По специальностям</label>
+            <a></a>
+        </div>
+        <div id="left_menu_hr_div">
+            <hr/>
+        </div>
+
+        <div id="tree" class="scrolling_tree">
+        </div>
+    </div>
+{% endblock %}
+
+{% block right %}
+    <div id="contentDek">
+        <div id="report_modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Отчет</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="report_form" method="get">
+                            <input hidden id="report_dep_input" name="dep">
+                            <div class="form-group">
+                                <label>Период</label>
+                                <input type="text" class="form-control datepicker-here"
+                                       data-range="true" data-multiple-dates-separator=" - "
+                                       id="report_period" name="report_period"
+                                       autocomplete="off">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="bootbox-btn" data-dismiss="modal">Отмена</button>
+                        <button form="report_form" type="submit" class="bootbox-btn confirm_btn">
+                            Создать
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div class="content_title_Dek">
+            <label>Контингент</label>
+            {% if 'edit_dekanat' in emp_permissions or 'foreign_editor' in emp_permissions %}
+                {% if visa_ends_soon %}
+                    {% include 'contingent/visa_end_soon.html' %}
+                {% endif %}
+            {% endif %}
+
+            <div class="div_for_content_table">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <button class="btn btn-default" data-target="#choose_columns_modal"
+                            data-toggle="modal">
+                        <span class="glyphicon glyphicon-menu-hamburger"></span>
+                    </button>
+                    <button id="select_all" class="btn btn-default"><span
+                            class="glyphicon glyphicon-th-list"></span>
+                        Выбрать все
+                    </button>
+                    <button id="unselect_all" class="btn btn-default"><span
+                            class="glyphicon glyphicon-unchecked"></span> Снять выделение
+                    </button>
+                    <button id="clear_filter_btn" class="btn btn-default"><span
+                            class="glyphicon glyphicon-remove"></span> Очистить фильтры
+                    </button>
+
+                    <div id="pagination" class="pull-right">
+                        {{ students_table.pagination }}
+                    </div>
+                </div>
+                <div id="contingent_table_div">
+                    <div class="table-responsive">
+                        <table class="table table-striped tableDek" id="contingent_table">
+                            <tbody id="contingent_table_body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block modals %}
+    {% include 'contingent/student_ref_modal.html' %}
+    {% include 'contingent/student_milref_modal.html' %}
+    <div id='choose_columns_modal' class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Выберите столбцы</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bootbox-btn" data-dismiss="modal">
+                        Закрыть
+                    </button>
+                    <button id="show_hide_columns_btn" type="button" class="bootbox-btn confirm_btn">Показать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='contingent_excel_report_modal' class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Параметры</h4>
+                </div>
+                <div class="modal-body">
+                    <input id="is_report_fio_concat" type="checkbox">
+                    <label for="is_report_fio_concat">Добавить столбец с ФИО</label>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bootbox-btn" data-dismiss="modal">
+                        Закрыть
+                    </button>
+                    <button id="export_excel_btn" type="button" class="bootbox-btn confirm_btn">Экспорт
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

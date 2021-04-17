@@ -1,0 +1,784 @@
+{% extends "baseDekanat.html" %}
+{% load staticfiles %}
+
+{% block container %}
+    {% block menu %}
+        <div id="horizontalMenuDek">
+            <div class="horizontal_menu_point">
+            </div>
+            <div class="horizontal_menu_point">
+            </div>
+            <div id="main_hor_menu_div">
+            </div>
+        </div>
+    {% endblock %}
+    <br/>
+
+    <div id="mainDivDek">
+        {% block left %}
+            <div class="leftMenuDekStudents">
+                {% if student.info.photo %}
+                    <a href="{{ student.info.photo.url }}" target="_blank">
+                        <div class="div-for-photo"
+                             style="background: url({{ student.info.photo.url }}) no-repeat center/cover;">
+                        </div>
+                    </a>
+                    {% if 'edit_dekanat' in emp_permissions %}
+                        <a href="/dekanat/student/delete_photo/{{ student.id }}/"
+                           style="color: #2C3E50; font-weight: 600; margin-left: 15px;">
+                            Удалить фото<span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <div class="div-for-photo"
+                         style="background: url({% static 'std_photo_default.png' %}) no-repeat center/cover;">
+                    </div>
+                {% endif %}
+
+                <form action="/dekanat/student/redact_photo/" id="form_upload_photo" method="POST"
+                      enctype="multipart/form-data" style="margin-left: 15px">{% csrf_token %}
+                    <input hidden name="id_student" value="{{ student.id }}">
+                    <input id="input_file_change_photo" type="file" name="photo" style="color:transparent;"
+                           accept="image/jpeg">
+                </form>
+
+                <nav id="yak_menu">
+                    <ul>
+                        <li><a href="#yak1">Личная информация</a></li>
+                        {% if 'edit_student_hostel' in emp_permissions %}
+                            <li><a href="#yak_student_hostel">Данные об общежитии</a></li>
+                        {% endif %}
+                        <li><a href="#yak_pers_doc">Документ, удостоверяющий личность</a></li>
+                        <li><a href="#yak2">Документы</a></li>
+                        {% if is_foreign is True %}
+                            <li><a href="#visa">Виза</a></li>
+                        {% endif %}
+                        <li><a href="#yak_stud_docs">Документы студ. отдел кадров</a></li>
+                        <li><a href="#yak3">Текущее образование</a></li>
+                        <li><a href="#yak_old_education">Предыдущее образование</a></li>
+                        <li><a href="#yak4">Приказы по студенту</a></li>
+                        <li><a href="#yak5">Зачетная книжка</a></li>
+                        <li><a href="#yak7">ГЭК/ГАК</a></li>
+                        <li><a href="#yak8">Документы об образовании</a></li>
+                        <li><a href="#yak10">Воинский учет</a></li>
+                        <li><a href="#yak_health">Карточка здоровья</a></li>
+                    </ul>
+                </nav>
+            </div>
+        {% endblock %}
+
+        {% block right %}
+            <div id="right-container-student">
+                <div class="sub-container-student" id="yak1">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>{{ student.surname }} {{ student.name }} {{ student.patronymic }} </label>
+                            {% if 'edit_dekanat' in emp_permissions %}
+                                <p align="right">
+                                    <a href="/dekanat/student/redactprivate/{{ student.id }}/">Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>Информация из деканата:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Институт (факультет):{{ student.group.dep.get_institute|default:"" }}</li>
+                                    <li>Группа: {{ student.group.name_group|default:"" }}</li>
+                                    <li>Номер зачетной книжки: {{ student.zcode|default:"" }}</li>
+                                    <li>Статус: {{ student.get_status_display|default:"" }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="div-info-student" id="yak1">
+                            <div class="label-info-student">
+                                <label>Личная информация:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li> Дата рождения: {{ student.info.birthday|date:"d.m.Y" }} </li>
+                                    <li> Пол: {{ student.info.get_gender_display|default:"" }}</li>
+                                    <li> Гражданство: {{ student.info.citizen|default:"" }}</li>
+                                    <li> Язык: {{ student.info.foreign_lang|default:"" }}</li>
+                                    <li> Контактные данные: {{ student.info.phone_1c|default:"" }}</li>
+                                    <li> Номер телефона: {{ student.info.phone|default:"" }}</li>
+                                    <li> Электронный адрес: {{ student.info.email|default:"" }}</li>
+                                    <li> Фактический адрес проживания: {{ student.info.fact_address|default:"" }}</li>
+                                    <li> Адрес регистрации: {{ student.info.reg_address|default:"" }}</li>
+                                    <li> Семейное положение:
+                                        {{ student.info.get_family_status_display|default:"" }}</li>
+                                    <li> Проживает в общежитии:
+                                        {% if student.hostel.in_hostel %} Да {% else %} Нет {% endif %} </li>
+                                    <li> Многодетная семья:
+                                        {% if student.info.is_large_family %} Да {% else %} Нет {% endif %}
+                                    </li>
+                                    <li> Сирота: {% if student.info.is_orphan %} Да {% else %} Нет {% endif %} </li>
+                                    <li> Чернобылец: {% if student.info.is_chernobyl %} Да {% else %}
+                                        Нет {% endif %} </li>
+                                    <li> Инвалид: {% if student.info.is_invalid %} Да {% else %} Нет {% endif %} </li>
+                                    <li> Группа инвалидности: {{ student.info.invalid_group|default:"" }}</li>
+                                    {% if student.info.children_count %}
+                                        <li> Количество детей: {{ student.info.children_count }}</li>
+                                    {% endif %}
+                                    {% if student.info.single_mother %}
+                                        <li> Мать одиночка: {{ student.info.single_mother|yesno }}</li>
+                                    {% endif %}
+                                    <li> Номер договора на
+                                        оплату: {{ student.info.payment_contract_number|default_if_none:"" }}</li>
+                                    {% if student.debt %}
+                                        <li>Долги:
+                                            {% if student.debt.last_debt > 0 %}
+                                                за прошлый год {{ student.debt.last_debt }} р.,
+                                            {% endif %}
+                                            {% if student.debt.semestr1 > 0 %}
+                                                за 1 семетр {{ student.debt.semestr1 }} р.,
+                                            {% endif %}
+                                            {% if student.debt.semestr2 > 0 %}
+                                                за 2 семестр {{ student.debt.semestr2 }} р.
+                                            {% endif %}
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="div-info-student" id="yak1">
+                            <div class="label-info-student">
+                                <label>Информация о родственниках:</label>
+                            </div>
+                            <div>
+                                <table class="table tableleftstyle">
+                                    <thead>
+                                    <th>Родственник</th>
+                                    <th>ФИО</th>
+                                    <th>Дата рождения</th>
+                                    <th>Телефон</th>
+                                    <th>E-mail</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for relative in relatives %}
+                                        <tr align="center">
+                                            <td>{{ relative.type }}</td>
+                                            <td>{{ relative.surname }}
+                                                {{ relative.name }} {{ relative.patronymic }}</td>
+                                            <td>{{ relative.birthday|date:"d.m.Y"|default:"" }}</td>
+                                            <td>{{ relative.phone }}</td>
+                                            <td>{{ relative.email }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if 'edit_student_hostel' in emp_permissions %}
+                    <div class="sub-container-student" id="yak_student_hostel">
+                        <div class="div_for_content_with_border">
+                            <div class="div-title-student">
+                                <label>Данные об общежитии</label>
+                                <p align="right">
+                                    <a href="/dekanat/student/redact_hostel/{{ student.id }}/">Редактировать</a>
+                                </p>
+                            </div>
+                            <hr/>
+                            <div>
+                                <div class="div-info-student">
+                                    <div class="ul-info-student">
+                                        <ul>
+                                            <li>Категория
+                                                доступа: {{ student.hostel.get_hostel_access_display|default:"" }}</li>
+                                            {% if student.hostel.hostel_number %}
+                                                <li>Общежитие: {{ student.hostel.hostel_number|default:"" }}</li>
+                                            {% endif %}
+                                            {% if student.hostel.section %}
+                                                <li>Секция: {{ student.hostel.section|default:"" }}</li>
+                                            {% endif %}
+                                            {% if student.hostel.room %}
+                                                <li>Комната: {{ student.hostel.room|default:"" }}</li>
+                                            {% endif %}
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="sub-container-student" id="yak_pers_doc">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Документ, удостоверяющий личность</label>
+                            {% if 'edit_dekanat' in emp_permissions %}
+                                <p align="right">
+                                    <a href="/dekanat/student/redact_pers_doc/{{ student.id }}/"> Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>{{ student.person_doc.doc_type }}:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Серия: {{ student.person_doc.doc_series|default:"" }}</li>
+                                    <li>Номер: {{ student.person_doc.doc_number|default:"" }}</li>
+                                    <li>Дата выдачи: {{ student.person_doc.doc_date|date:"d.m.Y" }}</li>
+                                    <li>Кем выдан: {{ student.person_doc.doc_dep|default:"" }}</li>
+                                    <li>Код подразделения: {{ student.person_doc.doc_dep_code|default:"" }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak2">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Документы</label>
+                            {% if 'edit_dekanat' in emp_permissions %}
+                                <p align="right"><a href="/dekanat/student/redactdoc/{{ student.id }}/">
+                                    Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>СНИЛС:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Номер СНИЛС: {{ student.docs.snils_number|default:"" }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>ИНН:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Номер ИНН: {{ student.docs.inn_number|default:"" }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>Медицинский полис:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Номер: {{ student.docs.oms_number|default:"" }}</li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>Платежные реквизиты банка:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Счет: {{ student.bank_details.account|default:"" }}</li>
+                                    <li>Наименование банка: {{ student.bank_details.bank_name|default:"" }}</li>
+                                    <li>БИК: {{ student.bank_details.bic|default:"" }} </li>
+                                    <li>Корр. счет: {{ student.bank_details.corr_account|default:"" }}</li>
+                                    <li>ИНН: {{ student.bank_details.inn|default:"" }}</li>
+                                    <li>КПП: {{ student.bank_details.kpp|default:"" }}</li>
+                                    <li>ОКПО: {{ student.bank_details.okpo|default:"" }}</li>
+                                    <li>ОГРН: {{ student.bank_details.ogrn|default:"" }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if is_foreign %}
+                    <div class="sub-container-student" id="visa">
+                        <div class="div_for_content_with_border">
+                            <div class="div-title-student">
+                                <label>Виза</label>
+                                {% if 'foreign_editor' in emp_permissions %}
+                                    <p align="right"><a href="/dekanat/student/visa_edit/{{ student.id }}/">
+                                        Редактировать</a>
+                                    </p>
+                                {% endif %}
+                            </div>
+                            <hr/>
+                            <div class="div-info-student">
+                                <div class="ul-info-student">
+                                    <ul>
+                                        <li> Серия, номер: {{ student.docs.visa_series_number|default:"" }}</li>
+                                        <li> Срок начала
+                                            действия: {{ student.docs.visa_start_date|default:""|date:"d.m.Y" }}</li>
+                                        <li> Срок окончания
+                                            действия: {{ student.docs.visa_end_date|default:""|date:"d.m.Y" }}</li>
+                                        <li> Эквивалентность документа об образовании: {{ student.docs.equivalence_edu_doc|yesno:"да, нет" }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="sub-container-student" id="yak_stud_docs">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Документы студ. отд. кадров</label>
+                            {% if 'student_doc_dep' in emp_permissions %}
+                                <p align="right">
+                                    <a href="/dekanat/student/student_doc_dep/student_documents/?id={{ student.id }}">Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="table-responsive">
+                                <table class="table table-hover tableleftstyle">
+                                    <thead>
+                                    <tr>
+                                        <th>Серия</th>
+                                        <th>Номер</th>
+                                        <th>Тип</th>
+                                        <th>Признак</th>
+                                        <th>Статус</th>
+                                        <th>Местонахождение</th>
+                                        <th>Дата создания</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="scrolltbody">
+                                    {% for doc in student_documents %}
+                                        <tr>
+                                            <td>{{ doc.series|default:"" }}</td>
+                                            <td>{{ doc.number|default:"" }}</td>
+                                            <td>{{ doc.type_doc|default:"" }}</td>
+                                            <td>{{ doc.sign|yesno:"Оригинал,Копия, " }}</td>
+                                            <td>{{ doc.get_status_display|default:"" }}</td>
+                                            <td>{{ doc.location|default:"-" }}</td>
+                                            <td>{{ doc.doc_date |date:"d.m.Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak3">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Текущее образование</label>
+                        </div>
+
+                        <hr/>
+
+                        <div class="div-sub-title-student">
+                            <label>Информация о зачислении</label>
+                            {% if 'edit_dekanat' in emp_permissions %}
+                                <p align="right"><a href="/dekanat/student/redact_infoenroll/{{ student.id }}/">
+                                    Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="ul-info-student">
+                            <ul>
+                                <li>Год поступления: {{ student.abit_info.ent_doc_date|date:"Y" }}</li>
+                            </ul>
+                        </div>
+                        <div class="label-info-student">
+                            <label>Приказ о зачислении:</label>
+                        </div>
+                        <div class="ul-info-student">
+                            <ul>
+                                <li>Номер: {{ student.abit_info.ent_doc_num|default:"" }}</li>
+                                <li>Дата: {{ student.abit_info.ent_doc_date|date:"d.m.Y" }}</li>
+                                <li>Целевой набор: {% if student.abit_info.abit_is_direction %} Да {% else %}
+                                    Нет {% endif %}</li>
+                            </ul>
+                        </div>
+                        <div class="div-sub-title-student">
+                            <label>Обучение в ВУЗе</label>
+                        </div>
+                        <div class="label-info-student">
+                            <label>Текущая информация:</label>
+                        </div>
+                        <div class="ul-info-student">
+                            <ul>
+                                <li>Статус: {{ student.get_status_display|default:"" }}</li>
+                                <li>Институт: {{ student.group.dep.get_institute|default:"" }}</li>
+                                <li>Выпускающая кафедра: {{ student.plan.spec.producing_dep|default:"" }}</li>
+                                <li>Группа: {{ student.group|default:"" }}</li>
+                                <li>Курс: {{ student.kurs|default:"" }}</li>
+                                <li>Направление/Специальность: {{ student.group.spec_group.spec|default:"" }}</li>
+                                <li>Образовательная программа: {{ student.plan.spec|default:"" }}</li>
+                                <li>Форма обучения: {{ student.group.spec_group.eduForm }}</li>
+                                <li>Основа обучения: {{ student.edu_type|default:"" }}</li>
+                                <li>Стипендия: {{ student.stip|default:"" }}</li>
+                                <li>Ускоренная форма обучения: {% if student.curr_edu.is_accelerated %} Да {% else %}
+                                    Нет {% endif %}</li>
+                                <li>Учебный план: {{ student.plan }}</li>
+                            </ul>
+                        </div>
+                        {% if student.diploma_tutor or student.diploma_theme %}
+                            <div class="label-info-student">
+                                <label>ВКР:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Научный
+                                        руководитель: {{ student.diploma_tutor.post|default:"" }} {{ student.diploma_tutor.employer|default:"" }}</li>
+                                    <li>Тема ВКР: {{ student.diploma_theme|default:"" }}</li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak_old_education">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Документы о предыдущем образовании</label>
+                            {% if 'edit_dekanat' in emp_permissions %}
+                                <p align="right">
+                                    <a href="/dekanat/student/redact_prev_edu/{{ student.id }}/">Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div class="div-sub-title-student">
+                            <label>Предыдущее образование</label>
+                        </div>
+                        <div class="ul-info-student">
+                            <ul>
+                                <li>Уровень образования: {{ student.prev_edu.prevEduLevel|default:"" }}</li>
+                                <li>Учебное заведение: {{ student.prev_edu.prevEduOrg|default:"" }}</li>
+                                <li>Год окончания: {{ student.prev_edu.yearEnd|default:"" }}</li>
+                                <li>Документ об образовании: {{ student.prev_edu.prevEduDocType|default:"" }}</li>
+                                <li>Признак: {{ student.prev_edu.is_prev_edu_orginal|yesno:"Оригинал,Копия, " }}</li>
+                                <li>Серия: {{ student.prev_edu.prevEduDocSer|default:"" }}</li>
+                                <li>Номер: {{ student.prev_edu.prevEduDocNum|default:"" }}</li>
+                                <li>Дата выдачи: {{ student.prev_edu.prevEduDocDateGet|date:"d.m.Y" }}</li>
+                            </ul>
+                        </div>
+                        {% if isOtherVuz == True %}
+                            <div class="div-sub-title-student">
+                                <label>Данные, заполняемые при зачислении из другого ВУЗа</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Наименование ВУЗа:
+                                        {{ student.abit_info.another_name|default:"" }}
+                                    </li>
+                                    <li>Наименование документа:
+                                        {% if student.abit_info.another_doc_type == 0 %} справка об обучении
+                                        {% elif student.abit_info.another_doc_type == 1 %} академическая справка
+                                        {% endif %}
+                                    </li>
+                                    <li id="seria">Серия: {{ student.abit_info.another_doc_series|default:"" }}</li>
+                                    <li>Номер: {{ student.abit_info.another_doc_number|default:"" }}</li>
+                                    <li>Год поступления в предыдущий ВУЗ:
+                                        {{ student.abit_info.another_year_start|default:"" }}
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak_history_order">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Предшествующие приказы</label>
+                            {% if 'edit_dekanat' in emp_permissions %}
+                                <p align="right">
+                                    <a href="/dekanat/student/redact_history_order/{{ student.id }}/">Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="table-responsive">
+                                <table class="table table-hover tableleftstyle">
+                                    <thead>
+                                    <tr>
+                                        <th>Номер</th>
+                                        <th>Дата</th>
+                                        <th rowspan="2">Тип</th>
+                                        <th rowspan="2">Подразделение</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="scrolltbody">
+                                    {% for order in all_history_orders_student %}
+                                        <tr>
+                                            <td>{{ order.number|default:"" }}</td>
+                                            <td>{{ order.date|date:"d.m.Y" }}</td>
+                                            <!--td>{{ order.get_type_display }}</td-->
+                                            <td>{{ order.type_order|default:"" }}</td>
+                                            <td>{{ order.department.smallname|default:"" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak4">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Приказы по студенту </label>
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="table-responsive">
+                                <table class="table table-hover tableleftstyle">
+                                    <thead>
+                                    <tr>
+                                        <th>Номер</th>
+                                        <th>Дата</th>
+                                        <th>Начало действия</th>
+                                        <th rowspan="2">Тип</th>
+                                        <th rowspan="2">Подразделение</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="scrolltbody">
+                                    {% for history in all_history_student %}
+                                        {% if history.order %}
+                                            <tr {% if 'read_orders' in emp_permissions %}ondblclick="return window.open('/orders/{{ history.order.pathOpen }}?id_order={{ history.order.id }}')"{% endif %}>
+                                                <td>{{ history.order.name|default:"" }}</td>
+                                                <td>{{ history.order.date|date:"d.m.Y" }}</td>
+                                                <td>{{ history.date|date:"d.m.Y" }}</td>
+                                                <td>{{ history.type_order|default:"" }}</td>
+                                                <td>{{ history.order.department.smallname|default:"" }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak5">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Зачетная книжка</label>
+                            <p align="right">
+                                <a href="/dekanat/markbook/?id={{ student.id }}&type=4">Открыть в зачетке</a>
+                            </p>
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            {% include 'student_info/student_info_markbook.html' %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak7">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>ГЭК/ГАК</label>
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="label-info-student">
+                                <label>Приказ об отчислении:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Номер: {{ student.gak_info.exc_doc_num|default:"" }}</li>
+                                    <li>Дата: {{ student.gak_info.exc_doc_date|default:"" }}</li>
+                                </ul>
+                            </div>
+                            <div class="label-info-student">
+                                <label>Диплом:</label>
+                            </div>
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Тип:</li>
+                                    <li>Дубликат:</li>
+                                    <li>Серия:</li>
+                                    <li>Номер:</li>
+                                    <li>Дата выдачи:</li>
+                                    <li>Регистрационный номер:</li>
+                                    <li>Дата регистрации:</li>
+                                </ul>
+                            </div>
+                            <div class="div-info-student">
+                                <div class="label-info-student">
+                                    <label>Приложение к диплому:</label>
+                                </div>
+                                <div class="ul-info-student">
+                                    <ul>
+                                        <li>Тип:</li>
+                                        <li>Дубликат:</li>
+                                        <li>Серия:</li>
+                                        <li>Номер:</li>
+                                        <li>Дата выдачи:</li>
+                                        <li>Регистрационный номер:</li>
+                                        <li>Дата регистрации:</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak8">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Документы об образовании выданные в ВУЗЕ</label>
+                        </div>
+                        <hr/>
+                    </div>
+                </div>
+
+
+                <div class="sub-container-student" id="yak10">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Воинский учет</label>
+                            {% if 'edit_military_student_info' in emp_permissions %}
+                                <p align="right"><a href="/dekanat/student/redact_milinfo/{{ student.id }}/">
+                                    Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div class="div-info-student">
+                            <div class="ul-info-student">
+                                <ul>
+                                    <li>Состоит на воинском учете: {{ student.mil_info.is_mil_reg|yesno }}</li>
+                                    {% if student.mil_info.is_mil_reg %}
+                                        <li>Категория: {{ student.mil_info.get_category_display|default:"" }}</li>
+                                        <li>Военкомат: {{ student.mil_info.mil_office|default:"" }}</li>
+                                        <li>Комментарии: {{ student.mil_info.comment|default:"" }}</li>
+                                    {% endif %}
+                                    <li>Учится на военной кафедре: {{ student.mil_info.is_mil_kaf|yesno }}</li>
+                                    {% if student.mil_info.is_mil_kaf %}
+                                        <li>Дата начала обучения:
+                                            {{ student.mil_info.start_contract_date|default:""|date:"d.m.Y" }}</li>
+                                        <li>Дата окончания обучения:
+                                            {{ student.mil_info.end_contract_date|default:""|date:"d.m.Y" }}</li>
+                                        <li>Номер контракта: {{ student.mil_info.contract_number|default:"" }}</li>
+                                        <li>Дата заключения контракта:
+                                            {{ student.mil_info.contract_date|default:""|date:"d.m.Y" }}</li>
+                                        <li>Программа подготовки:
+                                            {{ student.mil_info.get_mil_kaf_edu_program_display|default:"" }}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-container-student" id="yak_health">
+                    <div class="div_for_content_with_border">
+                        <div class="div-title-student">
+                            <label>Карточка здоровья</label>
+                            {% if 'edit_student_health' in emp_permissions %}
+                                <p align="right"><a href="/dekanat/student/redact_health/{{ student.id }}/">
+                                    Редактировать</a>
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr/>
+                        <div>
+                            <div class="div-info-student">
+                                <div class="ul-info-student">
+                                    <ul>
+                                        <li>Последняя
+                                            флюорография: {{ health_info.fluoro_last_date|date:"d.m.Y"|default:"" }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="div-info-student" id="yak1">
+                                <div class="label-info-student">
+                                    <label>Медицинские осмотры:</label>
+                                </div>
+                                <div>
+                                    <table class="table tableleftstyle table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2">Дата осмотра</th>
+                                            <th rowspan="2">ЧСС в покое</th>
+                                            <th rowspan="2">Масса тела (кг)</th>
+                                            <th rowspan="2">Рост (см)</th>
+                                            <th rowspan="2">ЖЕЛ (мл)</th>
+                                            <th rowspan="1" colspan="2">Динамометр.(кг)</th>
+                                            <th rowspan="1" colspan="2">АД сист.</th>
+                                            <th rowspan="2">Время восстановления</th>
+                                        </tr>
+                                        <tr>
+                                            <th rowspan="1" colspan="1">левая</th>
+                                            <th rowspan="1" colspan="1">правая</th>
+                                            <th rowspan="1" colspan="1">СД</th>
+                                            <th rowspan="1" colspan="1">ДД</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for health in list_health_check %}
+                                            <tr>
+                                                <td>{{ health.check_date|date:"d.m.Y"|default:"-" }}</td>
+                                                <td>{{ health.resting_heart_rate|default:"-" }}</td>
+                                                <td>{{ health.weight|default:"-" }}</td>
+                                                <td>{{ health.height|default:"-" }}</td>
+                                                <td>{{ health.lung_capacity|default:"-" }}</td>
+                                                <td>{{ health.dyn_left|default:"-" }}</td>
+                                                <td>{{ health.dyn_right|default:"-" }}</td>
+                                                <td>{{ health.sys_blood_pres|default:"-" }}</td>
+                                                <td>{{ health.dias_blood_pres|default:"-" }}</td>
+                                                <td>{{ health.recovery_time|default:"-" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <table class="table tableleftstyle table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Дата осмотра</th>
+                                            <th>Физкультурная группа</th>
+                                            <th>Группа здоровья</th>
+                                            <th>Диагноз</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for health in list_health_check %}
+                                            <tr>
+                                                <td>{{ health.check_date|date:"d.m.Y"|default:"-" }}</td>
+                                                <td>{{ health.get_phys_cult_group_display|default:"-" }}</td>
+                                                <td>{{ health.get_health_group_display|default:"-" }}</td>
+                                                <td>{{ health.diagnosis|default:"-" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% block other_info %}
+                {% endblock %}
+            </div>
+        {% endblock %}
+    </div>
+    <script>
+        $("document").ready(function () {
+            $("#input_file_change_photo").change(function () {
+                document.getElementById('form_upload_photo').submit()
+            });
+        });
+    </script>
+{% endblock %}

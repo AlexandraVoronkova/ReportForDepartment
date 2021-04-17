@@ -1,0 +1,99 @@
+<div class="dekanat-modal modal fade" id="edit_doc_student_modal" tabindex="-1" role="dialog"
+     aria-labelledby="modal_label">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="modal_edit_group_label"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="form-edit-stud-document" method="post" class="form-horizontal">{% csrf_token %}
+                    <input type="hidden" name="id_record" id="id_record">
+                    <div class="row order-label-with-input">
+                        <input id="id_doc" name="id_doc" type="hidden" hidden>
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label class="col-sm-4 control-label">Серия:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="series_doc" id="series_doc">
+                            </div>
+                        </div>
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label class="col-sm-4 control-label">Номер:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="number_doc" id="number_doc">
+                            </div>
+                        </div>
+
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label class="col-sm-4 control-label">Тип:</label>
+                            <div class="col-sm-8">
+                                <select class="selectpicker form-control" data-width="100%" id="doc_type"
+                                        title="Выберите" name="doc_type">
+                                    {% for doctype in dicts.doctype_stud_pers_dep_all %}
+                                        <option value="{{ doctype.id }}"> {{ doctype }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label class="col-sm-4 control-label">Признак:</label>
+                            <div class="col-sm-8">
+                                <select name="sign_select" class="selectpicker form-control"
+                                        id="sign_select" title="Выберите">
+                                    <option></option>
+                                    <option value=True>Оригинал</option>
+                                    <option value=False>Копия</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label class="col-sm-4 control-label">Статус:</label>
+                            <div class="col-sm-8">
+                                <select class="selectpicker form-control" data-width="100%" id="status_select"
+                                        title="Выберите" name="status_select" onchange="getValue(this.value);">
+                                    {% for status in dicts.status_all %}
+                                        <option value="{{ status.0 }}"> {{ status.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label class="col-sm-4 control-label">Местонахождение:</label>
+                            <div class="col-sm-8">
+                                <select class="selectpicker form-control" data-width="100%" id="depart_select"
+                                        title="Выберите" name="depart_select" data-live-search="true" disabled>
+                                    <option></option>
+                                    <option value="{{ dicts.dep_id165.id }}">{{ dicts.dep_id165 }}</option>
+                                    {% for dep in dicts.depart_all %}
+                                        <option value="{{ dep.id }}"> {{ dep }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row col-md-12 order-label-with-input">
+                            <label for="date_doc" class="col-sm-4 control-label">Дата сохранения:</label>
+                            <div class="col-sm-8">
+                                <input id="date_doc" type="text" name="date_doc" disabled
+                                       class="form-control datepicker-here" autocomplete="off">
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bootbox-accept " id="init_modal_stud_document"
+                        style="margin-right: 35%">Сформировать
+                </button>
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Отмена</button>
+                <button type="button" class="bootbox-btn confirm_btn" id="save_modal_stud_document">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>

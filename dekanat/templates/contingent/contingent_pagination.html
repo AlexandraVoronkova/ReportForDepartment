@@ -1,0 +1,35 @@
+<nav aria-label="Page navigation">
+    <ul class="pagination" style="margin: 0;">
+        {% if pagination.has_previous %}
+            <li>
+                        <span onclick="get_contingent_page('{{ url }}','{{ pagination.previous_page_number }}')">{{ p }}
+                            <span aria-hidden="true">&laquo;</span>
+                        </span>
+            </li>
+        {% endif %}
+        {% for p in pagination.paginator.page_range %}
+            {% if p > pagination.number|add:"-5" and p <  pagination.number|add:"5" %}
+                <li {% if p == pagination.number %} class="active" {% endif %}>
+                            <span onclick="get_contingent_page('{{ url }}','{{ p }}')">{{ p }}
+                            </span>
+                </li>
+            {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+            <li>
+                        <span onclick="get_contingent_page('{{ url }}','{{ pagination.next_page_number }}')">{{ p }}
+                            <span aria-hidden="true">&raquo;</span>
+                        </span>
+            </li>
+        {% endif %}
+        <li>
+            <span>Всего студентов: {{ pagination.paginator.count }}</span>
+        </li>
+        <li>
+            <span>
+                Выбрано: <p id="selected_count" style="display:inline">0</p> из
+                <p id="all_students_count" style="display:inline">{{ pagination.paginator.count }}</p>
+            </span>
+        </li>
+    </ul>
+</nav>
