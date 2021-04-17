@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta content="text/html; charset=utf-8">
+    <title>Title</title>
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'dekanat/css/reference.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.18.0/ui/trumbowyg.min.css">
+</head>
+<body>
+<div id="wrapper">
+    <div id="editor">
+        <div id="ref_container" class="container">
+            <div id="reference_header">
+                <img id="gerb_div" src="{% static 'src/gerb.png' %}" alt="герб">
+                <p><strong>МИНОБРНАУКИ РОССИИ</strong></p>
+                <p>ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ</p>
+                <p><strong>{{ university_settings.name|upper }}</strong></p>
+                <p><strong>({{ university_settings.small_name|upper }})</strong></p>
+                <p>{{ university_settings.get_full_addr }} ,тел.: {{ university_settings.phone }},
+                    факс.: {{ university_settings.fax }}, e-mail: {{ university_settings.email }}</p>
+                <hr>
+            </div>
+            <div id="reference_date">
+                <p>{% now "d E Y г." %} №{{ ref_number }}</p>
+                {% if options.response_number %}
+                    <p>на №{{ options.response_number }} от {{ options.response_date|date:"d E Y г." }}</p>
+                {% endif %}
+            </div>
+
+            <h5 id="ref_title" class="text-center">
+                СПРАВКА
+            </h5>
+            {% block ref_body %}
+            {% endblock %}
+            {% if options.is_study_period %}
+                <p {% if student_data.start_edu_date is None %}style="color: red" {% endif %}>
+                    Начало обучения -
+                    {% if student_data.start_edu_date %}{{ student_data.start_edu_date|date:"d.m.Y" }} г. {% else %}
+                        <не заполнено> г. {% endif %}
+                    Предполагаемое окончание обучения - {{ student_data.finish_date|date:"d.m.Y" }} г.
+                </p>
+            {% endif %}
+            {% if options.is_orders and student_data.orders %}
+                <dl>
+                    <dt>Приказы по студенту:</dt>
+                    {% for order in student_data.orders %}
+                        <dd>{{ order.order_title|default:"" }}(приказ № {{ order.order_name }}
+                            от {{ order.order_date|date:"d.m.Y" }}).
+                            {% if order.order_type == 15 %} Допущен к занятиям с {{ order.enroll_date|date:"d.m.Y" }}. {% endif %}
+                        </dd>
+                    {% endfor %}
+                </dl>
+            {% endif %}
+            <p>
+                Справка дана для предъявления {{ options.targer_place }}.
+            </p>
+            <p>
+                Основание выдачи справки:
+                <ins>приказ о зачислении №{{ student_data.order_num }} от {{ student_data.order_date|date:"d.m.Y" }} г.
+                </ins>
+            </p>
+            {% if options.is_director %}
+                <div class="sign">
+                    <p>
+                        {{ student_data.director_post}}_______________________________
+                        /{{ student_data.director.surname }} {{ student_data.director.name.0 }}. {{ student_data.director.patronymic.0 }}./
+                    </p>
+                </div>
+            {% endif %}
+            {% if options.is_deputy_director %}
+                <div class="sign">
+                    <p>
+                        Заместитель директора института _______________________________
+                        /{{ student_data.deputy_director.surname }} {{ student_data.deputy_director.name.0 }}.
+                        {{ student_data.deputy_director.patronymic.0 }}./
+                    </p>
+                </div>
+            {% endif %}
+            {% if options.is_edu_vicerector %}
+                <div class="sign">
+                    <p>
+                        Проректор по образовательной деятельности ____________________
+                        /{{ student_data.edu_vicerector }}/
+                    </p>
+                </div>
+            {% endif %}
+            {% if options.is_first_vicerector %}
+                <div class="sign">
+                    <p>
+                        Первый проректор _________________________
+                        /{{ student_data.first_vicerector }}/
+                    </p>
+                </div>
+            {% endif %}
+
+            {% if options.is_dotted_line %}
+                <hr>
+            {% endif %}
+        </div>
+    </div>
+    <div class="text-center">
+        <button class="btn btn-primary" onclick="PrintElem('editor')">Печать</button>
+    </div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.18.0/trumbowyg.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.18.0/langs/ru.min.js"></script>
+<script>
+    $('#editor').trumbowyg({
+        btns: [
+            ['undo', 'redo'], // Only supported in Blink browsers
+            ['formatting'],
+            ['strong', 'em', 'del'],
+            ['insertImage'],
+            ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+            ['horizontalRule'],
+            ['removeformat'],
+            ['print']
+        ],
+        btnsDef: {
+            print: {
+                fn: PrintElem,
+            }
+        },
+        lang: 'ru'
+    });
+
+    function PrintElem() {
+        let mywindow = window.open('', 'PRINT');
+
+        mywindow.document.write('<html><head><title>' + document.title + '</title>');
+        mywindow.document.write("<link rel=\"stylesheet\" href=\"/static/css/bootstrap.css\" type=\"text/css\"/>");
+        mywindow.document.write("<link rel=\"stylesheet\" href=\"/static/dekanat/css/reference.css\" type=\"text/css\"/>");
+        mywindow.document.write('</head><body >');
+        mywindow.document.write(document.getElementById('editor').innerHTML);
+        mywindow.document.write('</body></html>');
+
+        mywindow.document.close(); // necessary for IE >= 10
+        mywindow.focus(); // necessary for IE >= 10*/
+        setTimeout(function () {
+            mywindow.print();
+            mywindow.close();
+        }, 500);
+    }
+</script>
+</body>
+</html>

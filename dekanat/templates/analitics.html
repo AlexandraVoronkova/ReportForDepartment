@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="{% static 'new_base/bootstrap-4.5.0-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'fontawesome/all.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'new_base/bootstrap-select-1_13_18/bootstrap-select.min.css' %}">
+    <link rel="stylesheet" href="{% static 'new_base/tree/css/bootstrap-treeview.css' %}" type="text/css">
+</head>
+<body>
+<div class="container">
+
+</div>
+<canvas id="myChart" width="400" height="400"></canvas>
+<script src="{% static 'js/chart.min.js' %}"></script>
+<script>
+    const data = {
+        labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+        datasets: [
+            {
+                label: 'Dataset 1',
+                data: [1, 2, 3, 4, 5],
+                backgroundColor: ['red', 'black'],
+            }
+        ]
+    };
+    const config = {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Chart.js Pie Chart'
+                }
+            }
+        },
+    };
+    const DATA_COUNT = 5;
+    const NUMBER_CFG = {count: DATA_COUNT, min: 0, max: 100};
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, config)
+
+
+</script>
+
+</body>
+</html>

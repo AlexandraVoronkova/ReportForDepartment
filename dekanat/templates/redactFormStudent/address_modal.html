@@ -1,0 +1,85 @@
+<div class="dekanat-modal modal fade" id="address_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Введите адрес</h4>
+            </div>
+            <div class="modal-body">
+                <form class="js-form-address form-horizontal student-info-form">
+                    <div class="form-group">
+                        <label for="contry" class="col-sm-2 control-label">Страна:</label>
+                        <div class="col-sm-10">
+                            <select name="country" class="form-control selectpicker" data-live-search="true">
+                                {% for d in ds %}
+                                    <option value="{{ d.id }}" {% if d == student.info.citizen %}
+                                            selected {% endif %}> {{ d }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <input id="adrr_one_str" type="text" class="form-control address_input"
+                                   placeholder="Введите адрес в свободной форме до улицы">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip" class="col-sm-2 control-label">Индекс:</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="zip" class="form-control address_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="region_label" for="region" class="col-sm-2 control-label">Регион:</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="region" class="form-control address_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="district_label" for="district" class="col-sm-2 control-label">Район:</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="district" class="form-control address_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="city_label" for="city" class="col-sm-2 control-label">Город:</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="city" class="form-control address_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label id="street_label" for="street" class="col-sm-2 control-label">Улица:</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="street" class="form-control address_input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <label for="building" class="col-sm-2 control-label">Дом:</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="building" class="form-control address_input">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="flat" class="col-sm-2 control-label">Квартира:</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="flat" class="form-control address_input">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="error-message pull-left" style="display: none;">
+                    <label>Форма заполнена не верно!</label>
+                </div>
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="bootbox-btn confirm_btn" id="set_address_btn">ОК</button>
+            </div>
+        </div>
+    </div>
+</div>

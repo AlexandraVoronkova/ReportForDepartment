@@ -1,0 +1,21 @@
+{% extends 'student_reference/base.html' %}
+{% block ref_body %}
+    <p>Выдана
+        <ins>
+            <strong>{{ student_data.name }}</strong> (дата рождения: {{ student_data.birthday|date:"d.m.Y" }})
+        </ins>
+        в том, что {% if student_data.gender == 1 %} он обучался {% else %} она обучалась {% endif %} в период с
+        {% if student_data.start_edu_date %}
+            {{ student_data.start_edu_date|date:"d.m.Y" }} г.
+        {% else %}
+            < не заполнено >
+        {% endif %}
+        по ___.____._________ г.
+        в подразделении: {{ student_data.dep|lower }}
+     {% if options.is_spec %} по направлению подготовки {{ student_data.spec }} {% endif %}
+        по {{ student_data.edu_form }} форме обучения.
+    </p>
+    {% if student_data.status == 4 %}
+        <p>В настоящее время находится в академическом отпуске до ___.____._________ г.</p>
+    {% endif %}
+{% endblock %}

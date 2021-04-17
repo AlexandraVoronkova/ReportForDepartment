@@ -1,0 +1,202 @@
+{% extends "baseDekanat.html" %}
+{% load staticfiles %}
+
+{% block style %}
+    <style>
+        .student-info-form label {
+            font: 15px 'Roboto', sans-serif;
+            font-weight: 400;
+        }
+
+        .student-info-form legend {
+            font: 15px 'Roboto', sans-serif;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+{% block menu %}
+    <div id="horizontalMenuDek">
+        <div id="main_hor_menu_div">
+            <div class="horizontal_menu_point">
+                <button class="menu_button" onClick="location.href='/dekanat/student/{{ student.id }}'">
+                    <span class="glyphicon glyphicon-arrow-left"></span> Назад
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block right %}
+    <form id="savePersDoc" method="POST" action=""> {% csrf_token %} </form>
+    <div class="container" style="margin-top: 45px">
+        <div class="div_with_2border col-md-9 col-md-offset-1">
+            <div class="div_with_border">
+                <div class="div-title-student">
+                    <label>Документы о предыдущем образовании</label>
+                    <p align="right">
+                        <button type="submit" class="btn btn-default" form="savePersDoc">
+                            Сохранить
+                        </button>
+                    </p>
+                </div>
+                <hr/>
+                <div class="student-info-form">
+                    <fieldset>
+                        <!--legend>Предыдущее образование</legend-->
+                        <div class="form-group col-sm-12">
+                            <div>
+                                <label for="edu_org" class="control-label">Учебное заведение:</label>
+                            </div>
+                            <div>
+                                <input type="text" form="savePersDoc" name="edu_org" class="form-control"
+                                       value="{{ student.prev_edu.prevEduOrg|default:"" }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-3">
+                            <div>
+                                <label for="year_end" class="control-label">Год окончания:</label>
+                            </div>
+                            <div>
+                                <input type="number" form="savePersDoc" name="year_end" class="form-control"
+                                       value="{{ student.prev_edu.yearEnd|default:"" }}">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-9">
+                            <div>
+                                <label for="edu_level" class="control-label">Уровень образования:</label>
+                            </div>
+                            <div>
+                                <select name="edu_level" form="savePersDoc" class="form-control">
+                                    {% for level in prev_edu_level_all %}
+                                        <option value="{{ level.prevEduLevel }}"
+                                                {% if level == student.prev_edu.prevEduLevel %} selected {% endif %}>
+                                            {{ level }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-3">
+                            <div>
+                                <label for="is_original" class="control-label">Признак:</label>
+                            </div>
+                            <div>
+                                <select name="is_original" form="savePersDoc" class="form-control">
+                                    <option></option>
+                                    <option {% if student.prev_edu.is_prev_edu_orginal == True %}selected{% endif %}
+                                            value="True">Оригинал</option>
+                                    <option {% if student.prev_edu.is_prev_edu_orginal == False %}selected{% endif %}
+                                            value="False">Копия</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-9">
+                            <div>
+                                <label for="doc_type" class="control-label">Документ об образовании:</label>
+                            </div>
+                            <div>
+                                <select name="doc_type" form="savePersDoc" class="form-control">
+                                    {% for doctype in prev_edu_doctype_all %}
+                                        <option value="{{ doctype.0 }}"
+                                                {% if doctype.0 == student.prev_edu.prevEduDocType.id %}
+                                                selected {% endif %}> {{ doctype.1 }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-3">
+                            <div>
+                                <label for="doc_date" class="control-label">Дата выдачи:</label>
+                            </div>
+                            <div>
+                                <input type="text"
+                                       value="{{ student.prev_edu.prevEduDocDateGet|date:"d.m.Y"|default:"" }}"
+                                       form="savePersDoc" name="doc_date" class="form-control datepicker-here">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <div>
+                                <label for="doc_ser" class="control-label">Серия:</label>
+                            </div>
+                            <div>
+                                <input type="text" form="savePersDoc" name="doc_ser" class="form-control"
+                                       value="{{ student.prev_edu.prevEduDocSer|default:"" }}">
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-5">
+                            <div>
+                                <label for="doc_num" class="control-label">Номер:</label>
+                            </div>
+                            <div>
+                                <input type="text" form="savePersDoc" name="doc_num" class="form-control"
+                                       value="{{ student.prev_edu.prevEduDocNum|default:"" }}">
+                            </div>
+                        </div>
+                    </fieldset>
+                    {% if isOtherVuz == True %}
+                        <fieldset>
+                            <legend>Данные, заполняемые при зачислении из другого ВУЗа</legend>
+                            <div class="form-group col-sm-12">
+                                <div>
+                                    <label for="another_vuz_name" class="control-label">Наименование ВУЗа:</label>
+                                </div>
+                                <div>
+                                    <input type="text" form="savePersDoc" name="another_name" class="form-control"
+                                           value="{{ student.abit_info.another_name|default:"" }}">
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    <label for="old_doc_type" class="control-label">Наименование документа:</label>
+                                </div>
+                                <div>
+                                    <select class="form-control" title="Выберите" name="another_doc_type"
+                                            form="savePersDoc">
+                                        {% for type in student.abit_info.another_doc_type_choice %}
+                                            <option value="{{ type.0 }}"
+                                                    {% if type.0 == student.abit_info.another_doc_type %}
+                                                    selected {% endif %}> {{ type.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    <label for="another_year_start" class="control-label">
+                                        Год поступления в предыдущий ВУЗ:
+                                    </label>
+                                </div>
+                                <div>
+                                    <input type="number" form="savePersDoc" name="another_year_start" class="form-control"
+                                           value="{{ student.abit_info.another_year_start|default:"" }}">
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    <label for="another_doc_seria" class="control-label">Серия:</label>
+                                </div>
+                                <div>
+                                    <input type="text" form="savePersDoc" name="another_doc_series" class="form-control"
+                                           value="{{ student.abit_info.another_doc_series|default:"" }}">
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <div>
+                                    <label for="another_doc_num" class="control-label">Номер:</label>
+                                </div>
+                                <div>
+                                    <input type="text" form="savePersDoc" name="another_doc_number" class="form-control"
+                                           value="{{ student.abit_info.another_doc_number|default:"" }}">
+                                </div>
+                            </div>
+                        </fieldset>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
