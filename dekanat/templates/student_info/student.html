@@ -5,6 +5,10 @@
     {% block menu %}
         <div id="horizontalMenuDek">
             <div class="horizontal_menu_point">
+                <ol style="background: none" class="breadcrumb">
+                    <li><a style="color: #2077FE; font-size: 15px; text-decoration:none; cursor: pointer" href="/dekanat/contingent">Контингент</a></li>
+                    <li class="active">Карточка учащегося</li>
+                </ol>
             </div>
             <div class="horizontal_menu_point">
             </div>
@@ -73,9 +77,9 @@
                             </div>
                             <div class="ul-info-student">
                                 <ul>
-                                    <li>Группа: {{ student.group.name_group|default:"" }}</li>
-                                    <li>Номер зачетной книжки: {{ student.zcode|default:"" }}</li>
-                                    <li>Статус: {{ student.get_status_display|default:"" }}</li>
+                                    <li><span>Группа: {{ student.group.name_group|default:"" }}</span></li>
+                                    <li><span>Номер зачетной книжки: {{ student.zcode|default:"" }}</span></li>
+                                    <li><span>Статус: {{ student.get_status_display|default:"" }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -85,15 +89,15 @@
                             </div>
                             <div class="ul-info-student">
                                 <ul>
-                                    <li> Дата рождения: {{ student.info.birthday|date:"d.m.Y" }} </li>
-                                    <li> Пол: {{ student.info.get_gender_display|default:"" }}</li>
-                                    <li> Номер телефона: {{ student.info.phone|default:"" }}</li>
-                                    <li> Электронный адрес: {{ student.info.email|default:"" }}</li>
-                                    <li> Фактический адрес проживания: {{ student.info.fact_address|default:"" }}</li>
-                                    <li> Адрес регистрации: {{ student.info.reg_address|default:"" }}</li>
-                                    <li> Сирота: {% if student.info.is_orphan %} Да {% else %} Нет {% endif %} </li>
-                                    <li> Инвалид: {% if student.info.is_invalid %} Да {% else %} Нет {% endif %} </li>
-                                    <li> Группа инвалидности: {{ student.info.invalid_group|default:"" }}</li>
+                                    <li> <span>Дата рождения: {{ student.info.birthday|date:"d.m.Y" }} </span></li>
+                                    <li> <span>Пол: {{ student.info.get_gender_display|default:"" }}</span></li>
+                                    <li> <span>Номер телефона: {{ student.info.phone|default:"" }}</span></li>
+                                    <li> <span>Электронный адрес: {{ student.info.email|default:"" }}</span></li>
+                                    <li> <span>Фактический адрес проживания: {{ student.info.fact_address|default:"" }}</span></li>
+                                    <li> <span>Адрес регистрации: {{ student.info.reg_address|default:"" }}</span></li>
+                                    <li> <span>Сирота: {% if student.info.is_orphan %} Да {% else %} Нет {% endif %} </span></li>
+                                    <li> <span>Инвалид: {% if student.info.is_invalid %} Да {% else %} Нет {% endif %} </span></li>
+                                    <li> <span>Группа инвалидности: {{ student.info.invalid_group|default:"" }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -117,11 +121,11 @@
                             </div>
                             <div class="ul-info-student">
                                 <ul>
-                                    <li>Серия: {{ student.person_doc.doc_series|default:"" }}</li>
-                                    <li>Номер: {{ student.person_doc.doc_number|default:"" }}</li>
-                                    <li>Дата выдачи: {{ student.person_doc.doc_date|date:"d.m.Y" }}</li>
-                                    <li>Кем выдан: {{ student.person_doc.doc_dep|default:"" }}</li>
-                                    <li>Код подразделения: {{ student.person_doc.doc_dep_code|default:"" }}</li>
+                                    <li><span>Серия: {{ student.person_doc.doc_series|default:"" }}</span></li>
+                                    <li><span>Номер: {{ student.person_doc.doc_number|default:"" }}</span></li>
+                                    <li><span>Дата выдачи: {{ student.person_doc.doc_date|date:"d.m.Y" }}</span></li>
+                                    <li><span>Кем выдан: {{ student.person_doc.doc_dep|default:"" }}</span></li>
+                                    <li><span>Код подразделения: {{ student.person_doc.doc_dep_code|default:"" }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -138,15 +142,10 @@
 
                         <div class="div-sub-title-student">
                             <label>Информация о зачислении</label>
-                            {% if 'edit_dekanat' in emp_permissions %}
-                                <p align="right"><a href="#">
-                                    Редактировать</a>
-                                </p>
-                            {% endif %}
                         </div>
                         <div class="ul-info-student">
                             <ul>
-                                <li>Год поступления: {{ student.abit_info.ent_doc_date|date:"Y" }}</li>
+                                <li><span>Год поступления: {{ student.abit_info.ent_doc_date|date:"Y" }}</span></li>
                             </ul>
                         </div>
                         <div class="label-info-student">
@@ -154,8 +153,8 @@
                         </div>
                         <div class="ul-info-student">
                             <ul>
-                                <li>Номер: {{ student.abit_info.ent_doc_num|default:"" }}</li>
-                                <li>Дата: {{ student.abit_info.ent_doc_date|date:"d.m.Y" }}</li>
+                                <li><span>Номер: {{ student.abit_info.ent_doc_num|default:"" }}</span></li>
+                                <li><span>Дата: {{ student.abit_info.ent_doc_date|date:"d.m.Y" }}</span></li>
                             </ul>
                         </div>
                         <div class="div-sub-title-student">
@@ -166,14 +165,14 @@
                         </div>
                         <div class="ul-info-student">
                             <ul>
-                                <li>Статус: {{ student.get_status_display|default:"" }}</li>
-                                <li>Группа: {{ student.group|default:"" }}</li>
-                                <li>Курс: {{ student.kurs|default:"" }}</li>
-                                <li>Направление/Специальность: {{ student.group.spec_group.spec|default:"" }}</li>
-                                <li>Образовательная программа: {{ student.plan.spec|default:"" }}</li>
-                                <li>Форма обучения: {{ student.group.spec_group.eduForm }}</li>
-                                <li>Основа обучения: {{ student.edu_type|default:"" }}</li>
-                                <li>Стипендия: {{ student.stip|default:"" }}</li>
+                                <li><span>Статус: {{ student.get_status_display|default:"" }}</span></li>
+                                <li><span>Группа: {{ student.group|default:"" }}</span></li>
+                                <li><span>Курс: {{ student.kurs|default:"" }}</span></li>
+                                <li><span>Направление/Специальность: {{ student.group.spec_group.spec|default:"" }}</span></li>
+                                <li><span>Образовательная программа: {{ student.plan.spec|default:"" }}</span></li>
+                                <li><span>Форма обучения: {{ student.group.spec_group.eduForm }}</span></li>
+                                <li><span>Основа обучения: {{ student.edu_type|default:"" }}</span></li>
+                                <li><span>Стипендия: {{ student.stip|default:"" }}</span></li>
                             </ul>
                         </div>
                     </div>

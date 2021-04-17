@@ -1,150 +1,250 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-<html lang="en">
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<title>
+    {% block title %}
+        Ведение учебного процесса
+    {% endblock %}
+</title>
 <head>
-    <meta content="text/html; charset=utf-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'dekanat/css/reference.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.18.0/ui/trumbowyg.min.css">
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+
+    <link href="{% static 'css/checkbox-dek.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/daterangepicker.css' %}" type="text/css"> <!-- Календарь -->
+    <link rel="stylesheet" href="{% static 'tree/css/bootstrap-treeview.css' %}" type="text/css"> <!-- Не календарь -->
+    <link rel="stylesheet" href={% static 'css/jquery.treegrid.css' %}>
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/daterangepicker.js' %}"></script>
+    <script src="{% static 'tree/js/bootstrap-treeview.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+    <link href="{% static 'css/datepicker.min.css' %}" rel="stylesheet" type="text/css"> <!-- Календарь -->
+    <script src="{% static 'js/datepicker.min.js' %}"></script> <!-- Календарь -->
+    <script src="{% static 'js/bootbox.min.js' %}"></script> <!--prompt select -->
+    <script type="text/javascript" src="{% static 'js/jquery.treegrid.js' %}"></script>
+    <!--bootstrap select-->
+    <link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css' %}">
+    <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+
+    <script src="{% static 'js_utils/csrfSetupForAjax.js' %}"></script>
+    <!-- автодобавление csrf токена при ajax post -->
+    <script src="{% static 'js/scripts.js' %}"></script> <!--prompt select -->
+    <script src="{% static 'js_utils/dekanat_modal.js' %}"></script>
+
+    <!--JQXGRID -->
+    <link rel="stylesheet" href="{% static 'jqwidgets/styles/jqx.base.css' %} " type="text/css"/>
+    <link rel="stylesheet" href="{% static 'jqwidgets/styles/jqx.bootstrap.css' %} " type="text/css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+
+
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxcore.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxdata.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxscrollbar.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxbuttons.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxgrid.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxgrid.selection.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxgrid.edit.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxgrid.columnsreorder.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxcheckbox.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxlistbox.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxdropdownlist.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxnumberinput.js' %} "></script>
+    <script type="text/javascript" src="{% static 'jqwidgets/jqxcombobox.js' %} "></script>
+
+    <!-- end JQXGRID -->
+
+    <!-- обертка для создания грида -->
+    <script src="{% static 'js_utils/jqxgrid_utils.js' %} "></script>
+
+    {% block style %}
+    {% endblock %}
 </head>
+
+
 <body>
-<div id="wrapper">
-    <div id="editor">
-        <div id="ref_container" class="container">
-            <div id="reference_header">
-                <img id="gerb_div" src="{% static 'src/gerb.png' %}" alt="герб">
-                <p><strong>МИНОБРНАУКИ РОССИИ</strong></p>
-                <p>ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ</p>
-                <p><strong>{{ university_settings.name|upper }}</strong></p>
-                <p><strong>({{ university_settings.small_name|upper }})</strong></p>
-                <p>{{ university_settings.get_full_addr }} ,тел.: {{ university_settings.phone }},
-                    факс.: {{ university_settings.fax }}, e-mail: {{ university_settings.email }}</p>
-                <hr>
-            </div>
-            <div id="reference_date">
-                <p>{% now "d E Y г." %} №{{ ref_number }}</p>
-                {% if options.response_number %}
-                    <p>на №{{ options.response_number }} от {{ options.response_date|date:"d E Y г." }}</p>
-                {% endif %}
-            </div>
 
-            <h5 id="ref_title" class="text-center">
-                СПРАВКА
-            </h5>
-            {% block ref_body %}
-            {% endblock %}
-            {% if options.is_study_period %}
-                <p {% if student_data.start_edu_date is None %}style="color: red" {% endif %}>
-                    Начало обучения -
-                    {% if student_data.start_edu_date %}{{ student_data.start_edu_date|date:"d.m.Y" }} г. {% else %}
-                        <не заполнено> г. {% endif %}
-                    Предполагаемое окончание обучения - {{ student_data.finish_date|date:"d.m.Y" }} г.
-                </p>
-            {% endif %}
-            {% if options.is_orders and student_data.orders %}
-                <dl>
-                    <dt>Приказы по студенту:</dt>
-                    {% for order in student_data.orders %}
-                        <dd>{{ order.order_title|default:"" }}(приказ № {{ order.order_name }}
-                            от {{ order.order_date|date:"d.m.Y" }}).
-                            {% if order.order_type == 15 %} Допущен к занятиям с {{ order.enroll_date|date:"d.m.Y" }}. {% endif %}
-                        </dd>
-                    {% endfor %}
-                </dl>
-            {% endif %}
-            <p>
-                Справка дана для предъявления {{ options.targer_place }}.
-            </p>
-            <p>
-                Основание выдачи справки:
-                <ins>приказ о зачислении №{{ student_data.order_num }} от {{ student_data.order_date|date:"d.m.Y" }} г.
-                </ins>
-            </p>
-            {% if options.is_director %}
-                <div class="sign">
-                    <p>
-                        {{ student_data.director_post}}_______________________________
-                        /{{ student_data.director.surname }} {{ student_data.director.name.0 }}. {{ student_data.director.patronymic.0 }}./
-                    </p>
-                </div>
-            {% endif %}
-            {% if options.is_deputy_director %}
-                <div class="sign">
-                    <p>
-                        Заместитель директора института _______________________________
-                        /{{ student_data.deputy_director.surname }} {{ student_data.deputy_director.name.0 }}.
-                        {{ student_data.deputy_director.patronymic.0 }}./
-                    </p>
-                </div>
-            {% endif %}
-            {% if options.is_edu_vicerector %}
-                <div class="sign">
-                    <p>
-                        Проректор по образовательной деятельности ____________________
-                        /{{ student_data.edu_vicerector }}/
-                    </p>
-                </div>
-            {% endif %}
-            {% if options.is_first_vicerector %}
-                <div class="sign">
-                    <p>
-                        Первый проректор _________________________
-                        /{{ student_data.first_vicerector }}/
-                    </p>
-                </div>
-            {% endif %}
+<script>
+    var h_hght = 120; // высота шапки
+    var h_yak = 350;
+    var h_mrg = 0;    // отступ, когда шапка уже не видна
 
-            {% if options.is_dotted_line %}
-                <hr>
-            {% endif %}
+    $(function () {
+        var elem = $('#horizontalMenuDek');
+        var top = $(this).scrollTop();
+        if (top > h_hght) {
+            elem.css('top', h_mrg);
+        }
+        $(window).scroll(function () {
+            top = $(this).scrollTop();
+            if (top + h_mrg < h_hght) {
+                elem.css('top', (h_hght - top));
+            } else {
+                elem.css('top', h_mrg);
+            }
+        });
+    });
+
+
+    $(function () {
+        var elem_yak_menu = $('#yak_menu');
+        var top = $(this).scrollTop();
+        if (top > h_yak) {
+            elem.css('top', h_mrg);
+        }
+        $(window).scroll(function () {
+            top = $(this).scrollTop();
+            /*if (top + h_mrg < h_yak) {
+                elem.css('top', (h_yak - top));
+            } else {
+                elem.css('top', h_mrg);
+            }*/
+        });
+    });
+
+
+    $(document).ready(function () {
+        $("#yak_menu").on("click", "a", function (event) {
+            event.preventDefault();
+            var id = $(this).attr('href'),
+                top = $(id).offset().top;
+            $('body,html').animate({scrollTop: top}, 1500);
+        });
+    });
+</script>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation" style="position: absolute;">
+    <div class="container" id=header_container>
+        <div class="collapse navbar-collapse">
+            <table id="header_table">
+                <tr>
+                    <td id="td_header_logo">
+                        <div id="logo">
+                            <a href="/dekanat/contingent/">
+                                {% now "m" as current_month %}
+                                {% now "d" as current_day %}
+                                <img {% if current_month == '12' and current_day > '20' %}
+                                    src="{% static 'newyeartree.png' %}"
+                                {% else %}
+                                    src="{% static 'src/logo1.png' %}"
+                                {% endif %}
+                                    alt="BSTU Logo" style="height: 100px;"/></a>
+                        </div>
+                    </td>
+                    <td id="td_header_content">
+                        <div id="div_header_content2">Региональная электронная информационно-образовательная среда
+                            среднего профессионального образования Томской области
+                        </div>
+                    </td>
+                    <td id="td_header_login">
+                        {% block user %}
+                            <div id="login_title">
+                                <img src="{% static 'src/user1.png' %}">
+                                {% if user.is_authenticated %}
+                                    {{ user.employer.surname }} {{ user.employer.name.0 }}.
+                                    {{ user.employer.patronymic.0 }}.
+                                {% else %}
+                                    Аноним
+                                {% endif %}
+                                <a class="login_a link_menu" data-toggle="modal" data-target="#myModalExit">
+                                    <img width="30" height="30" src="{% static 'src/exit1.png' %}">
+                                </a>
+                            </div>
+
+                        {% endblock %}
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
-    <div class="text-center">
-        <button class="btn btn-primary" onclick="PrintElem('editor')">Печать</button>
+</div>
+<div class="dekanat-modal modal fade" id="myModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Выберите подразделение</h4>
+            </div>
+            <div class="modal-body">
+                <form id="change_dep_form" action="/change_dep/" method="post"> {% csrf_token %}</form>
+                <select class="form-control" name="dep" form="change_dep_form">
+                    {% for dep in awailable_deps %}
+                        <option value="{{ dep.0 }}" {% if dep.0 == request.curr_dep.id %}
+                                selected {% endif %}>{{ dep.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Отмена
+                </button>
+                <button type="submit" form="change_dep_form" class="bootbox-btn confirm_btn">ОК</button>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.18.0/trumbowyg.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.18.0/langs/ru.min.js"></script>
-<script>
-    $('#editor').trumbowyg({
-        btns: [
-            ['undo', 'redo'], // Only supported in Blink browsers
-            ['formatting'],
-            ['strong', 'em', 'del'],
-            ['insertImage'],
-            ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
-            ['horizontalRule'],
-            ['removeformat'],
-            ['print']
-        ],
-        btnsDef: {
-            print: {
-                fn: PrintElem,
-            }
-        },
-        lang: 'ru'
-    });
 
-    function PrintElem() {
-        let mywindow = window.open('', 'PRINT');
+<div class="dekanat-modal modal fade" id="myModalExit" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <form id="exit_form" action="/logout/" method="post"> {% csrf_token %}</form>
+                <h4>Выйти из системы?</h4>
+            </div>
 
-        mywindow.document.write('<html><head><title>' + document.title + '</title>');
-        mywindow.document.write("<link rel=\"stylesheet\" href=\"/static/css/bootstrap.css\" type=\"text/css\"/>");
-        mywindow.document.write("<link rel=\"stylesheet\" href=\"/static/dekanat/css/reference.css\" type=\"text/css\"/>");
-        mywindow.document.write('</head><body >');
-        mywindow.document.write(document.getElementById('editor').innerHTML);
-        mywindow.document.write('</body></html>');
+            <div class="modal-footer">
+                <button type="submit" id="btn_exit" form="exit_form" class="bootbox-btn confirm_btn">Выйти</button>
+                <button type="button" class="bootbox-btn" data-dismiss="modal">Отмена</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% block modals %}
+{% endblock %}
 
-        mywindow.document.close(); // necessary for IE >= 10
-        mywindow.focus(); // necessary for IE >= 10*/
-        setTimeout(function () {
-            mywindow.print();
-            mywindow.close();
-        }, 500);
-    }
-</script>
+<div id="containerDek">
+    {% block container %}
+
+        {% block menu %}
+        {% endblock %}
+
+        <div id="mainDivDek">
+            {% block left %}
+            {% endblock %}
+
+            {% block right %}
+            {% endblock %}
+
+        </div>
+    {% endblock %}
+    {% for message in messages %}
+        <script>
+            {% if message.tags == 'error' %}
+                dekanat_modals.alertError('{{ message }}');
+            {% endif %}
+            {% if message.tags == 'info' or  message.tags == 'success'%}
+                dekanat_modals.alertOK('{{ message }}');
+            {% endif %}
+        </script>
+    {% endfor %}
+</div>
+{% block javascript %}
+{% endblock %}
 </body>
 </html>
