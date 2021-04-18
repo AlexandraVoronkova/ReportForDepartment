@@ -1,0 +1,29 @@
+#contingent_table_div .table-responsive{
+    min-height: 100vh;
+}
+#contingent_table > tbody > tr.contingent-selected {
+    background-color: #4e699ae0;
+}
+
+#contingent_table > tbody > tr.contingent-selected td {
+    color: white;
+}
+
+#contingent_table > tbody > tr, #contingent_table > thead > tr >th {
+    text-align: left;
+}
+
+.student_filter_input{
+    max-width: 300px;
+}
+
+#status_select {
+    height: 22px;
+    padding: 2px 5px;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+#view_type_switch {
+    margin-top: 8px;
+}

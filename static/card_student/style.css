@@ -1,0 +1,33 @@
+.student-info-form label {
+    font: 15px 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+.student-info-form legend {
+    font: 15px 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.error-message label {
+    font: 15px 'Roboto', sans-serif;
+    font-weight: 400;
+    color: #cb3e27;
+}
+
+/* таблица с информацией о родителях студента */
+#info_relative_table td:first-child, #info_relative_table th:first-child {
+    display: none;
+}
+
+#info_relative_table > tbody > tr:hover {
+    /*background: #4e699ae0;
+    color: white;*/
+    cursor: pointer;
+}
+
+.error_input {
+    border: 1px solid red;
+    box-shadow: 0 0 4px rgb(203, 62, 39);
+    -webkit-box-shadow: 0 0 4px rgb(203, 62, 39);
+    -moz-box-shadow: 0 0 4px rgb(203, 62, 39);
+}

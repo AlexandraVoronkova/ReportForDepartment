@@ -1,0 +1,61 @@
+body {
+    font-size: 15px;
+}
+
+.trumbowyg-print-button svg {
+    display: none
+}
+
+.trumbowyg-print-button:after {
+    font-family: "Glyphicons Halflings";
+    content: "\e045";
+}
+
+.trumbowyg-box,
+.trumbowyg-editor {
+    min-height: 550px !important;
+}
+
+#wrapper {
+    display: block;
+    width: 1240px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#ref_container {
+    margin-left: 30px;
+}
+
+#reference_header {
+    position: relative;
+    text-align: center;
+    font-size: 12px;
+}
+#reference_header hr{
+    margin: 5px;
+    border-top: 1px solid black;
+}
+
+#reference_header p {
+    margin: 0 0 3px;
+}
+
+
+
+#ref_title {
+    font-size: 17px;
+}
+
+
+#gerb_div {
+    width: 60px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sign {
+    margin-top: 20px;
+    text-align: center;
+}

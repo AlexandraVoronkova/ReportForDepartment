@@ -1,0 +1,364 @@
+.table-bordered td, .table-bordered th {
+    border-color: #bec2c5;
+}
+
+#header_container {
+    min-width: 768px;
+    height: 120px;
+    padding-bottom: 10px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, .5);
+    background: #2C3E50;
+}
+
+#logo {
+    margin-left: 70px;
+    margin-top: 5px;
+    margin-right: 60px;
+}
+
+#td_header_logo {
+    width: 12%;
+    min-width: 200px;
+}
+
+#td_header_content {
+    width: 78%;
+    min-width: 300px;
+    user-select: none;
+}
+
+#div_header_content1 {
+    color: #DADFE1;
+    font: 23px 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+#div_header_content2 {
+    padding-top: 10px;
+    color: #DADFE1;
+    font: 18px 'Roboto', sans-serif;
+    font-weight: 300;
+}
+
+#login_title {
+    vertical-align: middle;
+    right: 1px;
+    min-width: 200px;
+    max-width: 500px;
+    text-align: center;
+    color: #DADFE1;
+    font: 16px 'Roboto', sans-serif;
+    font-weight: 300;
+    float: right;
+    margin-top: 10px;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+
+.login_a {
+    text-decoration: none;
+    color: #DADFE1;
+    font: 16px 'Roboto', sans-serif;
+    font-weight: 300;
+}
+
+.login_a:focus {
+    outline: none;
+}
+
+.link_menu:hover {
+    color: #DADFE1;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+body {
+    background: silver;
+}
+
+/* ----------------------------------------- */
+/* ------- CSS для системы "ДЕКАНАТ" ------- */
+/* ----------------------------------------- */
+
+#containerDek {
+    position: relative;
+    min-height: calc(100vh - 121px);
+    background: #e4e4e6;
+    overflow: hidden;
+}
+
+#horizontalMenuDek {
+    width: 100%;
+    height: 35px;
+    background: #c4bdb5;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .5);
+    position: fixed;
+    top: 120px; /*высота шапки в пикселях*/
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.horizontal_menu_point {
+    min-width: 200px;
+    height: 100%;
+    text-align: center;
+    padding: 5px;
+    white-space: nowrap;
+}
+
+#mainDivDek {
+    display: flex;
+    flex-direction: row;
+}
+
+#contentDek {
+    margin-top: 35px;
+    width: 85%;
+    min-height: calc(100vh - 155px);
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 20px;
+}
+
+/* --------------------------------------------------*/
+/*       Кнопки меню на горизонтальной панели        */
+/* --------------------------------------------------*/
+
+.menu_button {
+    font: 14px 'Roboto', sans-serif;
+    font-weight: 500;
+    color: #333;
+    background-color: #c4bdb5;
+    border: none;
+    width: auto;
+
+}
+
+.menu_button:hover {
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.menu_button:active {
+    outline: none;
+    border: none;
+}
+
+.menu_button:focus {
+    outline: none;
+}
+
+/* ---------------------------------------*/
+
+/* --------------------------------------------------*/
+/*       Боковое меню                                */
+/* --------------------------------------------------*/
+.leftMenu {
+    width: 270px;
+    min-height: calc(100vh - 120px);
+    background: #6d918d;
+    padding-left: 1px;
+    padding-right: 1px;
+    -moz-box-shadow: 2px 0px 2px rgba(0, 0, 0, .5); /* Для Firefox */
+    -webkit-box-shadow: 2px 0px 2px rgba(0, 0, 0, .5); /* Для Safari и Chrome */
+    box-shadow: 2px 0px 2px rgba(0, 0, 0, .5); /* Параметры тени */
+    padding-top: 35px;
+}
+
+.leftMenularge {
+    width: 500px;
+    min-height: calc(100vh - 120px);
+    background: #6d918d;
+    padding-left: 1px;
+    padding-right: 1px;
+    -moz-box-shadow: 2px 0px 2px rgba(0, 0, 0, .5); /* Для Firefox */
+    -webkit-box-shadow: 2px 0px 2px rgba(0, 0, 0, .5); /* Для Safari и Chrome */
+    box-shadow: 2px 0px 2px rgba(0, 0, 0, .5); /* Параметры тени */
+    padding-top: 35px;
+}
+
+#left_menu {
+    position: fixed;
+    margin-top: 50px;
+}
+
+#left_menu > ul > li {
+    margin-bottom: 5px;
+    width: 201px;
+    list-style-type: none;
+}
+
+#left_menu > ul > li:hover {
+    -moz-box-shadow: 0 0 5px rgba(0, 0, 0, .5); /* Для Firefox */
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .5); /* Для Safari и Chrome */
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5); /* Параметры тени */
+    text-decoration: none;
+}
+
+#left_menu > ul > li > a {
+    margin-bottom: 10px;
+    outline: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    text-align: center;
+    font: 16px 'Roboto', sans-serif;
+    font-weight: 600;
+    color: #2C3E50;
+    text-decoration: none;
+}
+
+.marked_menu {
+    -moz-box-shadow: 0 0 5px rgba(0, 0, 0, .5); /* Для Firefox */
+    -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, .5); /* Для Safari и Chrome */
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5); /* Параметры тени */
+    text-decoration: none;
+}
+
+/* ---------------------------------------*/
+
+/* ---------------------------------------------------------*/
+/*          Всплывашки с сообщениями                        */
+/*     Переопределены стили для плагина bootbox.            */
+/*При обновлении bootbox необходимо в коде убрать класс btn */
+/* ---------------------------------------------------------*/
+.bootbox .modal-dialog {
+    text-align: center;
+    font: 14px 'Roboto', sans-serif;
+    font-weight: 400;
+    width: 410px;
+    left: 50%;
+    border-radius: 5px;
+    background: #fff;
+    position: fixed;
+    margin-left: -214px;
+    top: 30%;
+    z-index: 99999;
+}
+
+.bootbox-body {
+    color: rgb(83, 103, 123);
+    font-size: 15px;
+}
+
+.bootbox .alert_img {
+    margin-bottom: 15px;
+}
+
+.bootbox .modal-footer {
+    justify-content: center;
+}
+
+
+.modal .bootbox-btn {
+    font-weight: 400;
+    height: 35px;
+    width: 150px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    font-size: 14px;
+    border-radius: 5px;
+    -webkit-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    color: #fff;
+    background-color: rgb(83, 103, 123);
+    border-color: rgb(83, 103, 123);
+    cursor: pointer;
+    outline: none;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.modal .bootbox-btn:hover {
+    color: #fff;
+    background-color: rgb(48, 64, 84);
+    border-color: rgb(44, 57, 69);
+}
+
+.modal .confirm_btn {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+.modal .confirm_btn:hover {
+    background-color: #449d44;
+    border-color: #398439;
+}
+
+.modal .cancel_btn {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+.modal .cancel_btn:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+.hover_th {
+    background-color: darkgrey !important;
+}
+
+/* --------------------------------------------------*/
+/*       Таблица                               */
+/* --------------------------------------------------*/
+
+.sticky {
+    background-color: lightgrey;
+    position: static;
+    position: sticky;
+    top: 0px;
+}
+
+.flexy {
+    display: block;
+    width: 100%;
+    max-height: 720px;
+    overflow: auto;
+
+}
+
+/* ---------------------------------------*/
+
+/* --------------------------------------------------*/
+/*       Кнопки                                      */
+/* --------------------------------------------------*/
+.btn-add {
+    color: rgb(72, 194, 72);
+}
+
+.btn-add:hover {
+    color: #317d31;
+}
+
+.btn-edit {
+    color: #5858a2
+}
+
+.btn-edit:hover {
+    color: #9096ca;
+}
+
+.btn-del {
+    color: black;
+}
+
+.btn-del:hover {
+    color: red;
+}
+
+/* ---------------------------------------*/
