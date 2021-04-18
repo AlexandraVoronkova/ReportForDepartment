@@ -3,12 +3,10 @@ import json
 
 from django.shortcuts import render
 
-from dekanat.controllers.serialize_student import serialize_student
-from dekanat.controllers.views_controllers import ViewGroup
-from dekanat.models.group import Group
-from dekanat.views.contingent import get_request_students
-from print.file_response_utils import get_file_response
-from print.print_reports.custom_report import CustomReportPrinter
+from contingent.controllers.serialize_student import serialize_student
+from contingent.controllers.views_controllers import ViewGroup
+from contingent.models import Group
+from contingent.views.contingent import get_request_students
 
 default_fields = [{'name': 'full_name', 'label': 'Полное имя', 'header': 'ФИО', 'width': 10},
                   {'name': 'short_name', 'label': 'Сокращенное имя', 'header': 'ФИО', 'width': 10},

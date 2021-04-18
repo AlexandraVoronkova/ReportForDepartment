@@ -1,16 +1,10 @@
 from django.db.models import F
 
-from dekanat.controllers.views_controllers import ViewDepartment
-from dekanat.models.student import StudentMilitaryControl
-from dict_app.models_.depart import EduDepartment
-from dict_app.models_.dict import DictEduType, DictLang, DictEduForm, DictPrevEduLevel, DictLevels, DictMilOffice
-from edu_plans.models.spec import Spec
+from contingent.controllers.views_controllers import ViewDepartment
+from contingent.models import Spec, DictEduType, DictLang, DictEduForm
 
 
 def get_students_fields(dep=None):
-    mil_office_options = [{'label': mil_of.name, 'value': mil_of.id} for mil_of in
-                          DictMilOffice.objects.filter(id__in=[38, 37, 51, 50])]
-    mil_office_options.append({'label': 'остальные', 'value': -1})
     if dep:
         students = ViewDepartment(dep).get_student_query_set()
         citizen_options = list(students
@@ -179,53 +173,11 @@ def get_students_fields(dep=None):
             'history': False
         },
         {
-            'label': 'Староста',
-            'db_field': 'starosta__isnull',
-            'json_field': 'is_starosta',
-            'filter_type': 'bool',
-            'hidden': True,
-            'history': False
-        },
-        {
-            'label': 'Номер приказа о зачислении',
-            'db_field': 'abit_info__ent_doc_num',
-            'json_field': 'ent_doc_num',
-            'filter_type': 'text',
-            'hidden': True,
-            'history': False
-        },
-        {
-            'label': 'Дата приказа о зачислении',
-            'db_field': 'abit_info__ent_doc_date',
-            'json_field': 'ent_doc_date',
-            'filter_type': 'date',
-            'hidden': True,
-            'history': False
-        },
-        {
-            'label': 'Целевой набор',
-            'db_field': 'abit_info__abit_is_direction',
-            'json_field': 'is_direction',
-            'filter_type': 'bool',
-            'hidden': True,
-            'history': False
-        },
-        {
             'label': 'Курс',
             'db_field': 'group__kurs',
             'json_field': 'kurs',
             'filter_type': 'select',
             'options': kurs_options,
-            'hidden': True,
-            'history': True
-        },
-        {
-            'label': 'Уровень образования',
-            'db_field': 'group__spec_group__spec__level',
-            'json_field': 'level',
-            'filter_type': 'select',
-            'options': [{'label': str(level), 'value': level.id}
-                        for level in DictLevels.objects.all().order_by('level')],
             'hidden': True,
             'history': True
         },
@@ -281,77 +233,7 @@ def get_students_fields(dep=None):
             'options': [{'label': 'да', 'value': 1}, {'label': 'нет', 'value': 0}],
             'hidden': True
         },
-        {
-            'label': 'Категория студента ',
-            'db_field': 'mil_info__category',
-            'json_field': 'category',
-            'filter_type': 'select',
-            'options': [{'label': category[1], 'value': category[0]} for category in
-                        StudentMilitaryControl.mil_categories],
-            'hidden': True
-        },
-        {
-            'label': 'Военкомат',
-            'db_field': 'mil_info__mil_office',
-            'json_field': 'mil_office',
-            'filter_type': 'select',
-            'options': mil_office_options,
-            'hidden': True
-        },
-        {
-            'label': 'Учится на военной кафедре',
-            'db_field': 'mil_info__is_mil_kaf',
-            'json_field': 'is_mil_kaf',
-            'filter_type': 'select',
-            'options': [{'label': 'да', 'value': 1}, {'label': 'нет', 'value': 0}],
-            'hidden': True
-        },
-        {
-            'label': 'Учебная программа военной кафедры',
-            'db_field': 'mil_info__mil_kaf_edu_program',
-            'json_field': 'mil_kaf_edu_program',
-            'filter_type': 'select',
-            'options': [{'label': program[1], 'value': program[0]} for program in
-                        StudentMilitaryControl.mil_kaf_edu_programes],
-            'hidden': True
-        },
-        {
-            'label': 'Уровень предыдущего образования',
-            'db_field': 'prev_edu__prevEduLevel',
-            'json_field': 'prev_edu_level',
-            'filter_type': 'select',
-            'options': [{'label': str(prev_edu), 'value': prev_edu.id}
-                        for prev_edu in DictPrevEduLevel.objects.all()],
-            'hidden': True
-        },
-        {
-            'label': 'Дата флюорографии',
-            'db_field': 'health_check__fluoro_last_date',
-            'json_field': 'last_fluoru_date',
-            'filter_type': 'date',
-            'hidden': True
-        },
-        {
-            'label': 'Номер договора на оплату',
-            'db_field': 'info__payment_contract_number',
-            'json_field': 'payment_contract_number',
-            'filter_type': 'text',
-            'hidden': True
-        },
-        {
-            'label': 'Долг по оплате',
-            'db_field': 'debt__isnull',
-            'json_field': 'debt',
-            'filter_type': 'bool',
-            'hidden': True
-        },
-        {
-            'label': 'Приказы по студенту',
-            'db_field': '',
-            'json_field': 'orders',
-            'filter_type': 'text',
-            'hidden': True
-        },
+
         {
             'label': 'номер СНИЛС',
             'db_field': 'docs__snils_number',
@@ -359,51 +241,6 @@ def get_students_fields(dep=None):
             'filter_type': 'text',
             'hidden': True
         },
-        {
-            'label': 'указан СНИЛС',
-            'db_field': 'docs__snils_number',
-            'json_field': 'is_snils',
-            'filter_type': 'select',
-            'options': [{'label': 'да', 'value': 1}, {'label': 'нет', 'value': 0}],
-            'hidden': True
-        },
-        {
-            'label': 'Год окончания предыдущего образования',
-            'db_field': 'prev_edu__prevEduDocDateGet__year',
-            'json_field': 'prev_edu_end_year',
-            'filter_type': 'text',
-            'hidden': True
-        },
-        {
-            'label': 'Место предыдущего образования',
-            'db_field': 'prev_edu__prevEduOrg',
-            'json_field': 'prev_edu_org',
-            'filter_type': 'text',
-            'hidden': True
-        },
-        {
-            'label': 'Номер приказа об отчислении',
-            'db_field': 'pointorderdeduct__order__name',
-            'json_field': 'deduct_order_num',
-            'filter_type': 'text',
-            'hidden': True
-        },
-        {
-            'label': 'Дата приказа об отчислении',
-            'db_field': 'pointorderdeduct__order__date',
-            'json_field': 'deduct_order_date',
-            'filter_type': 'date',
-            'hidden': True
-        },
+
     ]
-    if not dep or hasattr(dep, 'university'):
-        fields_info.append({
-            'label': 'Институт',
-            'db_field': 'group__dep__dep',
-            'json_field': 'institute',
-            'filter_type': 'select',
-            'options': [{'label': i.smallname, 'value': i.id}
-                        for i in EduDepartment.objects.filter(type=1)],
-            'hidden': True
-        })
     return fields_info

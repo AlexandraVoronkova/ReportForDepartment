@@ -1,12 +1,5 @@
-from django.db.models import Q
-
-from dekanat.models.group import Group
-from dekanat.models.student import Student
-from dict_app.models_.depart import EduDepartment
-from edu_plans.models.plan_dict import SubjectType
-from edu_plans.models.spec import Spec, DictSpec
-from history_app.controllers.student_controller import get_student_state
-from history_app.models import StudentHistory
+from contingent.models import Student, Group, StudentHistory, Spec
+from contingent.models.depart import Department
 
 
 class ViewBase:
@@ -121,30 +114,6 @@ class ViewGroup(ViewBase):
     def get_all_groups_by_date(self, date):
         return [self.group]
 
-    def get_student_learn_subject(self, plan_subject, date=None):
-        """
-        Возвращает студентов группы, которые изучают заданный предмет
-        :param plan_subject: предмет плана
-        :param date: дата в истории
-        :return: Список студентов или список студентов в истории
-        """
-        q = Q(plan=plan_subject.plan) | Q(plan__parent=plan_subject.plan)
-        if not date:
-            students = self.get_student_query_set().filter(status=1).filter(q)
-            if plan_subject.type not in SubjectType.main_subjects():
-                students = (students.filter(elective_subjects=plan_subject) |
-                            students.filter(facultative_subjects=plan_subject))
-            return students
-        else:
-            n_h = Q()
-            if plan_subject.type != SubjectType.MAIN_SUBJECT:
-                n_h = Q(elective_subjects=plan_subject) | Q(facultative_subjects=plan_subject)
-            students_history = self.get_all_students_in_history(date, status=1, filter_no_hist=n_h, filter_history=q)
-            students = []
-            for student in students_history:
-                students.append(get_student_state(student.student, student))
-            return list(students)
-
 
 class ViewDepartment(ViewBase):
     def __init__(self, dep):
@@ -157,13 +126,13 @@ class ViewDepartment(ViewBase):
         all_deps = []
         if hasattr(dep, 'edudepartment'):
             all_deps.append(dep)
-        child_deps = EduDepartment.objects.filter(dep=dep, is_producing=True, freedate=None)
+        child_deps = Department.objects.filter(dep=dep, is_producing=True, freedate=None)
         for child_dep in child_deps:
             all_deps.extend(self.__get_child_deps(child_dep))
         return all_deps
 
     def get_child_deps_edu(self, flag_free_date=True):
-        deps = EduDepartment.objects.filter(dep=self.dep, is_producing=True)
+        deps = Department.objects.filter(dep=self.dep, is_producing=True)
         if flag_free_date:
             deps = deps.filter(freedate=None)
         return deps.order_by('sort_code', 'name')
@@ -175,49 +144,6 @@ class ViewDepartment(ViewBase):
     def get_group_query_set(self):
         deps = self.__get_child_deps(self.dep)
         return Group.objects.filter(dep__in=deps)
-
-    def get_all_spec(self):
-        deps = self.get_child_deps_edu() + [self.dep]
-        return list(Spec.objects.filter(dep__in=deps))
-
-    def get_available_dict_spec(self):
-        settings = self.dep.get_settings()
-        levels = settings.get_available_levels()
-        return DictSpec.objects.filter(level__level__in=levels)
-
-    def get_avialable_specs(self):
-        """
-        Возвращает список направлений доступных подразделению
-        :return:
-        """
-        settings = self.dep.get_settings()
-        specs_type = settings.plan_available_type
-        specs = Spec.objects.filter(spec__parent__isnull=True)  # выбор только направлений
-        levels = settings.get_available_levels()
-        if specs_type == 1:
-            # выбор очных направлений привязанных к подразделению dep в соответствии с level
-            return specs.filter(dep=self.dep, eduForm__edu_form=1, spec__level__level__in=levels)
-        elif specs_type == 2:
-            # выбор всех заочных направлений в соответсвии с level
-            return specs.filter(eduForm__edu_form__in=[2, 3, 4], spec__level__level__in=levels)
-        elif specs_type == 3:  # выбор всех направлений по level
-            return specs.filter(spec__level__level__in=levels)
-
-    def get_avialable_abiturients(self):
-        settings = self.dep.get_settings()
-        # abit_type = settings.available_abiturient
-        dep = self.dep
-        # if abit_type == 2:  # для института дистанционки
-        #     dep = EduDepartment.objects.get(oldDekanatId=1975)  # необходимо показать абитуриентов заочки #todo потом вернуть в нормальное состояние
-
-        zaoch_dep = EduDepartment.objects.get(oldDekanatId=1975)
-        return Student.objects.filter(status=0, abit_info__abit_dep__in=[dep, zaoch_dep]).exclude(abit_info=None)
-
-    # Функции для просмотра истории
-    def get_child_deps_edu_by_date(self, date):
-        deps = EduDepartment.objects.filter(dep=self.dep, is_producing=True)
-        deps = deps.filter(freedate=None) | deps.filter(freedate__gte=date)
-        return list(deps.order_by('name'))
 
 
 class ViewSpec(ViewBase):

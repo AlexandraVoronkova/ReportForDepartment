@@ -1,7 +1,3 @@
-from dekanat.controllers.student_reference import get_student_reference_orders
-from orders.models import PointOrderDeductStudent
-
-
 # функции для сериализации полей в студенте, группа передается в каждую функцию для универсализации вызова
 # функции должны назваться get_<имя поля в fields в serialize_student>
 
@@ -121,10 +117,6 @@ def get_edu_type(student):
     return str(student.edu_type.get_smallname())
 
 
-def get_level(student):
-    return str(student.plan.spec.spec.level)
-
-
 def get_spec(student):
     return str(student.group.spec_group.spec)
 
@@ -147,29 +139,6 @@ def get_spec_name(student):
 
 def get_subspec_name(student):
     return str(student.plan.spec.spec.name)
-
-
-def get_ent_doc_num(student):
-    return student.abit_info.ent_doc_num
-
-
-def get_ent_doc_date(student):
-    if student.abit_info.ent_doc_date:
-        return student.abit_info.ent_doc_date.strftime('%d.%m.%Y')
-    else:
-        return ''
-
-
-def get_deduct_order_num(student):
-    point_order = PointOrderDeductStudent.objects.filter(student=student, order__isClosed=True).first()
-    if point_order:
-        return point_order.order.name
-
-
-def get_deduct_order_date(student):
-    point_order = PointOrderDeductStudent.objects.filter(student=student, order__isClosed=True).first()
-    if point_order:
-        return point_order.order.date.strftime('%d.%m.%Y')
 
 
 def get_is_mil_reg(student):
@@ -221,15 +190,6 @@ def get_payment_contract_number(student):
 def get_debt(student):
     if student.debt:
         return str(student.debt.semestr1 + student.debt.semestr2 + student.debt.last_debt)
-    return ''
-
-
-def get_orders(student):
-    orders = get_student_reference_orders(student)
-    orders = [f'{o["order_title"]} (приказ № {o["order_name"]} от {o["order_date"].strftime("%d.%m.%Y")})' for o in
-              orders]
-    if orders:
-        return ' ;'.join(orders)
     return ''
 
 
