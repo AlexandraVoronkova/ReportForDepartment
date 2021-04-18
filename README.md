@@ -46,8 +46,8 @@
 
 ## РАЗРАБОТЧИКИ
 
-Панченко Максим  backend, manager https://t.me/Maximinimus
-Савёлова Инна fullstack https://t.me/inna_savelova
-Ольховенко Виктория designer https://t.me/Olhovchuk
-Каратач Сергей data scientist https://t.me/karatach1998
-Воронкова Александра fullstack https://t.me/sashavoronkova
+- Панченко Максим  backend, manager https://t.me/Maximinimus
+- Савёлова Инна fullstack https://t.me/inna_savelova
+- Ольховенко Виктория designer https://t.me/Olhovchuk
+- Каратач Сергей data scientist https://t.me/karatach1998
+- Воронкова Александра fullstack https://t.me/sashavoronkova
